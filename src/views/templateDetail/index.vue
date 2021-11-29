@@ -1,6 +1,5 @@
 <template>
   <a-layout class="templateDetail">
-    <a-layout-header>Header</a-layout-header>
     <a-layout-content>
       <a-row class="content">
         <a-col :span="12">col-12</a-col>

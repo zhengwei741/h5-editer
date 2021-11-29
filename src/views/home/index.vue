@@ -1,11 +1,5 @@
 <template>
-  <a-layout class="home">
-    <a-layout-header>Header</a-layout-header>
-    <a-layout-content class="content">
-      <template-list />
-    </a-layout-content>
-    <a-layout-footer class="footer">Footer</a-layout-footer>
-  </a-layout>
+  <template-list />
 </template>
 
 <script lang="ts">
@@ -18,15 +12,3 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="less" scoped>
-.home {
-  height: 100%;
-  .content {
-    padding: 0 100px;
-    overflow: auto;
-  }
-  .footer {
-    background: #001529;
-  }
-}
-</style>

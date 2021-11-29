@@ -1,5 +1,11 @@
 <template>
-  <router-view />
+  <a-layout class="app">
+    <a-layout-header>Header</a-layout-header>
+    <a-layout-content class="content">
+      <router-view />
+    </a-layout-content>
+    <a-layout-footer class="footer">Footer</a-layout-footer>
+  </a-layout>
 </template>
 
 <script lang="ts">
@@ -11,6 +17,17 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="less" scoped>
+.app {
+  height: 100%;
+  .content {
+    overflow: auto;
+  }
+  .footer {
+    background: #001529;
+  }
+}
+</style>
 <style>
 #app {
   height: 100%;
