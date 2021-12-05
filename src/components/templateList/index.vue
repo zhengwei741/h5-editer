@@ -1,46 +1,41 @@
 <template>
-  <a-row :gutter="16" class="templateList">
-    <a-col :span="6" v-for="(item, index) of list" :key="index">
+  <a-row :gutter="[32, 16]" class="templateList">
+    <a-col :span="6" v-for="template of list" :key="template.id">
       <a-card hoverable>
         <template #cover>
-          <img
-            alt="example"
-            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-          />
+          <img alt="example" :src="template.coverImg" />
         </template>
         <template #actions>
           <setting-outlined key="setting" />
           <edit-outlined key="edit" />
           <ellipsis-outlined key="ellipsis" />
         </template>
-        <a-card-meta title="Card title" description="This is the description">
+        <a-card-meta
+          :title="template.author"
+          :description="template.description"
+        >
           <template #avatar>
-            <a-avatar
-              src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-            />
+            <a-avatar :src="template.authorImg" />
           </template>
         </a-card-meta>
       </a-card>
     </a-col>
   </a-row>
 </template>
-<script>
+<script lang="ts">
 import {
   SettingOutlined,
   EditOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons-vue'
-import { defineComponent } from 'vue'
+
+import { defineComponent, PropType } from 'vue'
+import { TemplateProps } from '@/store/index'
+
 export default defineComponent({
   props: {
     list: {
-      type: Array,
-      default() {
-        return [
-          1, 2, 3, 43, 45, 56, 6, 6, 7, 7, 2, 8, 2, 2, 3, 3, 34, 4, 4, 4, 1, 41,
-          4, 1, 4, 124,
-        ]
-      },
+      type: Array as PropType<TemplateProps[]>,
     },
   },
   components: {
@@ -50,8 +45,4 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="less" scoped>
-.templateList {
-  text-align: center;
-}
-</style>
+<style lang="less" scoped></style>
