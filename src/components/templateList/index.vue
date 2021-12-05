@@ -30,7 +30,7 @@ import {
 } from '@ant-design/icons-vue'
 
 import { defineComponent, PropType } from 'vue'
-import { TemplateProps } from '@/store/index'
+import { TemplateProps } from '@/store/templates'
 
 export default defineComponent({
   props: {
