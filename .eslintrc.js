@@ -23,7 +23,8 @@ module.exports = {
         "singleQuote": true,
         "semi": false
       }
-    ]
+    ],
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   },
   overrides: [
     {

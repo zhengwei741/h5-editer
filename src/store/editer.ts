@@ -27,7 +27,14 @@ const editer: Module<EditerProps, GlobalDataProps> = {
   state: {
     components: componentsData,
   },
-  mutations: {},
+  mutations: {
+    addComponent(state, component) {
+      state.components.push(component)
+    },
+    deleteComponent(state, index) {
+      state.components.splice(index, 1)
+    },
+  },
   actions: {},
   getters: {
     getEditer(state) {

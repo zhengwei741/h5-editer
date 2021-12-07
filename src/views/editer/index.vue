@@ -1,17 +1,17 @@
 <template>
   <a-layout class="editer">
-    <a-layout-sider theme="light" width="350">Sider</a-layout-sider>
+    <a-layout-sider theme="light" width="350">
+      <component-list />
+    </a-layout-sider>
     <a-layout-content>
-      <!-- <div v-for="component of components" :key="component.id">
-        {{ component }}
-      </div>
-      <l-text tag="span" text="123"></l-text> -->
-      <component
-        v-for="component of components"
+      <div
+        v-for="(component, index) of components"
         :key="component.id"
-        :is="component.name"
-        v-bind="component.props"
-      ></component>
+        class="component-wapper"
+      >
+        <span class="close" @click="deleteComponent(index)">删除</span>
+        <component :is="component.name" v-bind="component.props" />
+      </div>
     </a-layout-content>
     <a-layout-sider theme="light" width="350">Sider</a-layout-sider>
   </a-layout>
@@ -23,18 +23,25 @@ import { useStore } from 'vuex'
 import { GlobalDataProps } from '@/store/index'
 
 import LText from '@/components/LText/index.vue'
+import ComponentList from '@/components/componentList/index.vue'
 
 export default defineComponent({
   components: {
     LText,
+    ComponentList,
   },
   setup() {
     const store = useStore<GlobalDataProps>()
 
     const components = computed(() => store.state.editer.components)
 
+    const deleteComponent = (index: number) => {
+      store.commit('deleteComponent', index)
+    }
+
     return {
       components,
+      deleteComponent,
     }
   },
 })
@@ -43,5 +50,13 @@ export default defineComponent({
 <style lang="less" scoped>
 .editer {
   height: 100%;
+  .component-wapper {
+    position: relative;
+    .close {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
 }
 </style>
