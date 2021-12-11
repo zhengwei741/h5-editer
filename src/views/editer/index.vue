@@ -5,11 +5,11 @@
     </a-layout-sider>
     <a-layout-content>
       <div
-        v-for="(component, index) of components"
+        v-for="component of components"
         :key="component.id"
         class="component-wapper"
       >
-        <span class="close" @click="deleteComponent(index)">删除</span>
+        <span class="close" @click="deleteComponent(component)">删除</span>
         <component :is="component.name" v-bind="component.props" />
       </div>
     </a-layout-content>
@@ -19,11 +19,13 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
+
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '@/store/index'
 
 import LText from '@/components/LText/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
+import { ComponentProps } from '@/store/editer'
 
 export default defineComponent({
   components: {
@@ -35,8 +37,8 @@ export default defineComponent({
 
     const components = computed(() => store.state.editer.components)
 
-    const deleteComponent = (index: number) => {
-      store.commit('deleteComponent', index)
+    const deleteComponent = (component: ComponentProps) => {
+      store.commit('deleteComponent', component)
     }
 
     return {

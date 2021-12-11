@@ -31,8 +31,8 @@ const editer: Module<EditerProps, GlobalDataProps> = {
     addComponent(state, component) {
       state.components.push(component)
     },
-    deleteComponent(state, index) {
-      state.components.splice(index, 1)
+    deleteComponent(state, component) {
+      state.components.filter((cmp) => cmp.id === component.id)
     },
   },
   actions: {},
