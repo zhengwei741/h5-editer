@@ -1,17 +1,17 @@
 <template>
-  <component :is="tag" :style="styleProps">
+  <component :is="tag" :style="styleProps" @click="handleClick">
     {{ text }}
   </component>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
-import { pick } from 'lodash-es'
+import { defineComponent } from 'vue'
 import {
   transformToComponentProps,
   TextComponentProps,
   textDefaultProps,
-} from '@/shared/defaultProps'
+} from '../../shared/defaultProps'
+import useCommonComponent from '../../hooks/useCommonComponent'
 
 const defaultProps = transformToComponentProps(TextComponentProps)
 
@@ -21,16 +21,16 @@ export default defineComponent({
       type: String,
       default: 'span',
     },
-    text: {
-      type: String,
-      default: '',
-    },
     ...defaultProps,
   },
   setup(props) {
-    const styleProps = computed(() => pick(props, textDefaultProps))
+    const { styleProps, handleClick } = useCommonComponent(
+      props,
+      textDefaultProps
+    )
     return {
       styleProps,
+      handleClick,
     }
   },
 })

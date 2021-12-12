@@ -10,8 +10,8 @@ export interface ComponentProps {
 
 export interface EditerProps {
   components: ComponentProps[]
+  currentElement: string
 }
-
 const componentsData: ComponentProps[] = [
   {
     id: uuidv4(),
@@ -26,12 +26,36 @@ const componentsData: ComponentProps[] = [
 const editer: Module<EditerProps, GlobalDataProps> = {
   state: {
     components: componentsData,
+    currentElement: '',
   },
-  mutations: {},
+  mutations: {
+    addComponent(state, component) {
+      state.components.push(component)
+    },
+    deleteComponent(state, component) {
+      state.components = state.components.filter(
+        (cmp) => cmp.id === component.id
+      )
+    },
+    updateComponent(state, { key, value }) {
+      const updateComponent = state.components.find(
+        (component) => component.id === state.currentElement
+      )
+      if (updateComponent) {
+        updateComponent.props[key] = value
+      }
+    },
+    setActive(state, currentId: string) {
+      state.currentElement = currentId
+    },
+  },
   actions: {},
   getters: {
     getEditer(state) {
       return state
+    },
+    getCurrentElement(state) {
+      return state.components.find((comp) => comp.id === state.currentElement)
     },
   },
 }
