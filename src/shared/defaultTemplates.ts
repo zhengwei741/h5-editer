@@ -6,6 +6,9 @@ export const defaultTextTemplates = [
     tag: 'h2',
     width: '100px',
     name: 'l-text',
+    lineHeight: '2',
+    textAlign: 'left',
+    fontFamily: '',
   },
   {
     text: '正文内容',
