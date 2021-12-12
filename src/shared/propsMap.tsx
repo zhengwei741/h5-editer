@@ -1,3 +1,4 @@
+import { VNode } from 'vue'
 import { TextComponentProps } from './defaultProps'
 
 export interface PropToForm {
@@ -15,6 +16,22 @@ export interface PropToForm {
 export type PropsToForms = {
   [P in keyof TextComponentProps]?: PropToForm
 }
+
+const fontFamilyArr = [
+  { text: '无', value: '' },
+  { text: '宋体', value: '"SimSun","STSong"' },
+  { text: '黑体', value: '"SimHei","STHeiti"' },
+  { text: '楷体', value: '"KaiTi","STKaiti"' },
+  { text: '仿宋', value: '"FangSong","STFangsong"' },
+]
+const fontFamilyOptions = fontFamilyArr.map((font) => {
+  return {
+    value: font.value,
+    text: (
+      <span style={{ fontFamily: font.value }}>{font.text}</span>
+    ) as VNode,
+  }
+})
 
 export const mapToPropsToForms: PropsToForms = {
   text: {
@@ -67,11 +84,19 @@ export const mapToPropsToForms: PropsToForms = {
     component: 'a-select',
     subComponent: 'a-select-option',
     text: '字体',
-    options: [
-      { text: '宋体', value: '"SimSun","STSong"' },
-      { text: '黑体', value: '"SimHei","STHeiti"' },
-      { text: '楷体', value: '"KaiTi","STKaiti"' },
-      { text: '仿宋', value: '"FangSong","STFangsong"' },
-    ],
+    options: fontFamilyOptions,
+  },
+  opacity: {
+    component: 'a-slider',
+    text: '透明度',
+    extarProps: {
+      max: 100,
+      min: 0,
+      step: 1,
+    },
+    initalTransform(v: string) {
+      return parseFloat(v) * 100
+    },
+    afterTransform: (e: number) => (e / 100).toString(),
   },
 }

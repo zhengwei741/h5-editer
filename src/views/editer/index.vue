@@ -16,9 +16,6 @@
     </a-layout-content>
     <a-layout-sider theme="light" width="350">
       <props-table :props="currentElement?.props" @change="handleChange" />
-      <pre>
-        {{ currentElement?.props }}
-      </pre>
     </a-layout-sider>
   </a-layout>
 </template>

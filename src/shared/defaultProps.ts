@@ -45,7 +45,7 @@ export const CommonDefaultProps: CommonDefaultProps = {
   url: '',
   // size
   height: '',
-  width: '373px',
+  width: '100%',
   paddingLeft: '0px',
   paddingRight: '0px',
   paddingTop: '0px',
