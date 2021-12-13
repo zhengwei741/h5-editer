@@ -34,7 +34,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
     },
     deleteComponent(state, component) {
       state.components = state.components.filter(
-        (cmp) => cmp.id === component.id
+        (cmp) => cmp.id !== component.id
       )
     },
     updateComponent(state, { key, value }) {
@@ -51,9 +51,6 @@ const editer: Module<EditerProps, GlobalDataProps> = {
   },
   actions: {},
   getters: {
-    getEditer(state) {
-      return state
-    },
     getCurrentElement(state) {
       return state.components.find((comp) => comp.id === state.currentElement)
     },
