@@ -31,6 +31,8 @@ import { TextComponentProps } from '@/shared/defaultProps'
 import { PropToForm, PropsToForms, mapToPropsToForms } from '@/shared/propsMap'
 import RenderVnode from './renderVnode.vue'
 
+import ColorPicker from '@/components/colorPicker/index.vue'
+
 interface FormProps extends PropToForm {
   value?: string
   events: { [key: string]: (e: any) => any }
@@ -39,6 +41,7 @@ interface FormProps extends PropToForm {
 export default defineComponent({
   components: {
     RenderVnode,
+    ColorPicker,
   },
   props: {
     props: {

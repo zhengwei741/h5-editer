@@ -99,4 +99,8 @@ export const mapToPropsToForms: PropsToForms = {
     },
     afterTransform: (e: number) => (e / 100).toString(),
   },
+  color: {
+    component: 'color-picker',
+    text: '颜色',
+  },
 }

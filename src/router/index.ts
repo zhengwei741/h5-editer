@@ -14,6 +14,12 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "editer" */ '../views/editer/index.vue'),
   },
   {
+    path: '/test',
+    name: 'test',
+    component: () =>
+      import(/* webpackChunkName: "test" */ '../views/test/index.vue'),
+  },
+  {
     path: '/',
     component: () =>
       import(/* webpackChunkName: "layout" */ '../components/layout/index.vue'),

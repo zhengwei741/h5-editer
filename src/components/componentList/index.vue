@@ -14,12 +14,12 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
+import { v4 as uuidv4 } from 'uuid'
+import { clone } from 'lodash-es'
 
 import LTetx from '../LText/index.vue'
 import { defaultTextTemplates } from '@/shared/defaultTemplates'
 import { CommonDefaultProps } from '../../shared/defaultProps'
-
-import { v4 as uuidv4 } from 'uuid'
 
 export default defineComponent({
   components: {
@@ -31,7 +31,7 @@ export default defineComponent({
 
     const onItemClick = (template: Partial<CommonDefaultProps>) => {
       store.commit('addComponent', {
-        props: template,
+        props: clone(template),
         name: 'l-text',
         id: uuidv4(),
       })
