@@ -10,6 +10,7 @@ export const defaultTextTemplates = [
     fontFamily: '',
     opacity: '1',
     borderStyle: 'solid',
+    fontStyle: '',
   },
   {
     text: '正文内容',

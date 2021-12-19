@@ -1,15 +1,18 @@
 <template>
-  <color-picker></color-picker>
+  <IconSwitch></IconSwitch>
+  <FileUploader></FileUploader>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import ColorPicker from '@/components/colorPicker/index.vue'
+import IconSwitch from '@/components/IconSwitch/index.vue'
+import FileUploader from '@/components/fileUploader/index.vue'
 
 export default defineComponent({
   components: {
-    ColorPicker,
+    IconSwitch,
+    FileUploader,
   },
 })
 </script>

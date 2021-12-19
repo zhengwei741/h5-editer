@@ -103,4 +103,37 @@ export const mapToPropsToForms: PropsToForms = {
     component: 'color-picker',
     text: '颜色',
   },
+  fontWeight: {
+    component: 'icon-switch',
+    text: '加粗',
+    initalTransform(v: string) {
+      return v === 'bold'
+    },
+    afterTransform: (e: boolean) => {
+      return e ? 'bold' : ''
+    },
+    extarProps: {
+      tip: '加粗',
+    },
+  },
+  fontStyle: {
+    component: 'icon-switch',
+    text: '斜体',
+    initalTransform(v: string) {
+      return v === 'italic'
+    },
+    afterTransform: (e: boolean) => {
+      return e ? 'italic' : ''
+    },
+    subComponent: 'div',
+    options: [
+      {
+        value: false,
+        text: (<span style={{ 'font-style': 'italic' }}>I</span>) as VNode,
+      },
+    ],
+    extarProps: {
+      tip: '斜体',
+    },
+  },
 }

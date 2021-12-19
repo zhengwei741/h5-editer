@@ -32,6 +32,7 @@ import { PropToForm, PropsToForms, mapToPropsToForms } from '@/shared/propsMap'
 import RenderVnode from './renderVnode.vue'
 
 import ColorPicker from '@/components/colorPicker/index.vue'
+import IconSwitch from '@/components/IconSwitch/index.vue'
 
 interface FormProps extends PropToForm {
   value?: string
@@ -42,6 +43,7 @@ export default defineComponent({
   components: {
     RenderVnode,
     ColorPicker,
+    IconSwitch,
   },
   props: {
     props: {
