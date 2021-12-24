@@ -3,6 +3,9 @@
   <FileUploader
     actions="https://jsonplaceholder.typicode.com/posts/"
     :beforeUpload="beforeUpload"
+    drag
+    multiple
+    autoUpload
   >
   </FileUploader>
 </template>

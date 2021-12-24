@@ -5,9 +5,27 @@
       :style="{ display: 'none' }"
       ref="fileInputRef"
       @change="handlefileChange"
+      :multiple="multiple"
     />
 
-    <a-button type="primary" :loading="isUploading" @click="triggerUpload">
+    <div
+      class="drag-area"
+      v-if="drag"
+      v-on="events"
+      :class="isDragOver ? 'is-drag-over' : ''"
+    >
+      <div>
+        <upload-outlined class="area-icon" />
+        <div>将文件拖到此处，或<em>点击上传</em></div>
+      </div>
+    </div>
+
+    <a-button
+      v-else
+      type="primary"
+      :loading="isUploading"
+      @click="triggerUpload"
+    >
       <span v-if="isUploading">上传中</span>
       <span v-else>点击上传</span>
     </a-button>
@@ -43,7 +61,11 @@ import { defineComponent, ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 
-import { CloseOutlined, LoadingOutlined } from '@ant-design/icons-vue'
+import {
+  CloseOutlined,
+  LoadingOutlined,
+  UploadOutlined,
+} from '@ant-design/icons-vue'
 
 type fileUploaderState = 'ready' | 'uploading' | 'success' | 'error'
 
@@ -65,11 +87,15 @@ export default defineComponent({
     beforeUpload: {
       type: Function,
     },
+    drag: Boolean,
+    autoUpload: Boolean,
+    multiple: Boolean,
   },
   emits: ['success', 'error'],
   components: {
     CloseOutlined,
     LoadingOutlined,
+    UploadOutlined,
   },
   setup(props, { emit }) {
     const fileInputRef = ref<null | HTMLInputElement>(null)
@@ -82,42 +108,60 @@ export default defineComponent({
 
     const active = ref<null | number>(null)
 
+    const addFileToList = (file: File) => {
+      const fileObj: UploaderFile = {
+        name: file.name,
+        raw: file,
+        size: file.size,
+        state: 'ready',
+        uid: uuidv4(),
+      }
+      fileList.value.push(fileObj)
+      if (props.autoUpload) {
+        postFile(fileObj)
+      }
+    }
+
+    const uploadFiles = () => {
+      fileList.value
+        .filter((file) => file.state === 'ready')
+        .forEach((readyFile) => postFile(readyFile))
+    }
+
+    const beforeUploadCheck = (files: null | FileList) => {
+      if (files) {
+        if (props.beforeUpload) {
+          const result = props.beforeUpload(props.multiple ? files : files[0])
+          if (result && result instanceof Promise) {
+            result
+              .then(() => {
+                Array.prototype.forEach.call(files, (file) => {
+                  addFileToList(file)
+                })
+              })
+              .catch((e) => {
+                console.error(e)
+              })
+          } else if (result !== false) {
+            Array.prototype.forEach.call(files, (file) => {
+              addFileToList(file)
+            })
+          }
+        } else {
+          Array.prototype.forEach.call(files, (file) => {
+            addFileToList(file)
+          })
+        }
+      }
+    }
+
     const triggerUpload = () => {
       fileInputRef.value?.click()
     }
 
     const handlefileChange = (event: Event) => {
       const target = event.target as HTMLInputElement
-
-      const files = target.files
-
-      if (files && files[0]) {
-        const file = files[0]
-        const fileObj: UploaderFile = {
-          name: file.name,
-          raw: file,
-          size: file.size,
-          state: 'ready',
-          uid: uuidv4(),
-        }
-        // 校验 beforeUpload 钩子
-        if (props.beforeUpload) {
-          const result = props.beforeUpload(file)
-          if (result && result instanceof Promise) {
-            result
-              .then(() => {
-                postFile(fileObj)
-              })
-              .catch((e) => {
-                console.error(e)
-              })
-          } else if (result !== false) {
-            postFile(fileObj)
-          }
-        } else {
-          postFile(fileObj)
-        }
-      }
+      beforeUploadCheck(target.files)
     }
 
     const onDelFileHandle = (file: UploaderFile) => {
@@ -137,7 +181,6 @@ export default defineComponent({
         .then((res) => {
           readyFile.state = 'success'
           readyFile.response = res
-          fileList.value.push(readyFile)
           emit('success', {
             file: readyFile,
             fileList,
@@ -159,14 +202,50 @@ export default defineComponent({
         })
     }
 
+    const isDragOver = ref<boolean>(false)
+
+    const handleDrag = (e: DragEvent, over: boolean) => {
+      e.preventDefault()
+      isDragOver.value = over
+    }
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault()
+      isDragOver.value = false
+
+      if (e.dataTransfer) {
+        beforeUploadCheck(e.dataTransfer.files)
+      }
+    }
+
+    let events: { [key: string]: (e: any) => void } = {
+      click: triggerUpload,
+    }
+    // 拖拽事件
+    if (props.drag) {
+      events = {
+        ...events,
+        dragover: (e: DragEvent) => {
+          handleDrag(e, true)
+        },
+        dragleave: (e: DragEvent) => {
+          handleDrag(e, false)
+        },
+        drop: handleDrop,
+      }
+    }
+
     return {
       fileInputRef,
       isUploading,
       fileList,
       active,
+      events,
+      isDragOver,
       triggerUpload,
       handlefileChange,
       onDelFileHandle,
+      uploadFiles,
     }
   },
 })
@@ -189,5 +268,30 @@ export default defineComponent({
   .success {
     color: green;
   }
+}
+.drag-area {
+  background-color: #fff;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  box-sizing: border-box;
+  width: 360px;
+  height: 180px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  em {
+    color: #409eff;
+    font-style: normal;
+  }
+  .area-icon {
+    font-size: 64px;
+  }
+}
+.is-drag-over {
+  border: 1px solid #409eff;
 }
 </style>
