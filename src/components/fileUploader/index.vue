@@ -7,30 +7,24 @@
       @change="handlefileChange"
       :multiple="multiple"
     />
-
-    <div
-      class="drag-area"
-      v-if="drag"
-      v-on="events"
-      :class="isDragOver ? 'is-drag-over' : ''"
-    >
-      <div>
+    <!-- class="drag-area" -->
+    <div v-on="events" :class="isDragOver ? 'is-drag-over' : ''">
+      <div v-if="drag" class="drag-area">
         <upload-outlined class="area-icon" />
         <div>将文件拖到此处，或<em>点击上传</em></div>
       </div>
+
+      <div v-else>
+        <slot name="uploading" v-if="isUploading">
+          <a-button :loading="isUploading" disabled>上传中</a-button>
+        </slot>
+        <slot name="default" v-else>
+          <a-button type="primary">点击上传</a-button>
+        </slot>
+      </div>
     </div>
 
-    <a-button
-      v-else
-      type="primary"
-      :loading="isUploading"
-      @click="triggerUpload"
-    >
-      <span v-if="isUploading">上传中</span>
-      <span v-else>点击上传</span>
-    </a-button>
-
-    <ul class="uploadFile-list">
+    <ul class="uploadFile-list" v-show="showUploadList">
       <li
         class="uploadFile-item"
         v-for="(file, index) in fileList"
@@ -57,7 +51,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, reactive } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 
@@ -90,6 +84,10 @@ export default defineComponent({
     drag: Boolean,
     autoUpload: Boolean,
     multiple: Boolean,
+    showUploadList: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['success', 'error'],
   components: {
@@ -109,13 +107,14 @@ export default defineComponent({
     const active = ref<null | number>(null)
 
     const addFileToList = (file: File) => {
-      const fileObj: UploaderFile = {
+      // 一定要是响应式对象
+      const fileObj = reactive<UploaderFile>({
         name: file.name,
         raw: file,
         size: file.size,
         state: 'ready',
         uid: uuidv4(),
-      }
+      })
       fileList.value.push(fileObj)
       if (props.autoUpload) {
         postFile(fileObj)

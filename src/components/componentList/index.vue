@@ -8,6 +8,7 @@
     >
       <l-tetx v-bind="template"></l-tetx>
     </div>
+    <image-uploader @success="imageUploadHandle" />
   </div>
 </template>
 
@@ -21,9 +22,12 @@ import LTetx from '../LText/index.vue'
 import { defaultTextTemplates } from '@/shared/defaultTemplates'
 import { CommonDefaultProps } from '../../shared/defaultProps'
 
+import ImageUploader from '@/components/imageUploader/index.vue'
+
 export default defineComponent({
   components: {
     LTetx,
+    ImageUploader,
   },
   setup() {
     const templates = computed(() => defaultTextTemplates)
@@ -37,9 +41,21 @@ export default defineComponent({
       })
     }
 
+    const imageUploadHandle = () => {
+      store.commit('addComponent', {
+        props: {
+          // src: file.response.url,
+          src: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnimg.ws.126.net%2F%3Furl%3Dhttp%3A%2F%2Fdingyue.ws.126.net%2F2021%2F0128%2F6cd17366j00qnmnle008uc000vk00xcm.jpg%26thumbnail%3D650x2147483647%26quality%3D80%26type%3Djpg&refer=http%3A%2F%2Fnimg.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1643210383&t=85b0bdb2f86ba7486fdad23fd66dd36d',
+        },
+        name: 'l-image',
+        id: uuidv4(),
+      })
+    }
+
     return {
       templates,
       onItemClick,
+      imageUploadHandle,
     }
   },
 })

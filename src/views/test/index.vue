@@ -1,25 +1,18 @@
 <template>
   <!-- <IconSwitch></IconSwitch> -->
-  <FileUploader
-    actions="https://jsonplaceholder.typicode.com/posts/"
-    :beforeUpload="beforeUpload"
-    drag
-    multiple
-    autoUpload
-  >
-  </FileUploader>
+  <image-uploader />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 
 // import IconSwitch from '@/components/IconSwitch/index.vue'
-import FileUploader from '@/components/fileUploader/index.vue'
+import ImageUploader from '@/components/imageUploader/index.vue'
 
 export default defineComponent({
   components: {
     // IconSwitch,
-    FileUploader,
+    ImageUploader,
   },
   methods: {
     beforeUpload(file: any) {

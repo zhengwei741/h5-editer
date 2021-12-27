@@ -28,6 +28,7 @@ import { GlobalDataProps } from '@/store/index'
 import { ComponentProps } from '@/store/editer'
 
 import LText from '@/components/LText/index.vue'
+import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
 import EditeWrapper from '@/components/editeWrapper/index.vue'
 import PropsTable from '@/components/propsTable/index.vue'
@@ -35,6 +36,7 @@ import PropsTable from '@/components/propsTable/index.vue'
 export default defineComponent({
   components: {
     LText,
+    LImage,
     ComponentList,
     EditeWrapper,
     PropsTable,
