@@ -1,6 +1,5 @@
 import { Module } from 'vuex'
 import { GlobalDataProps } from './index'
-import { v4 as uuidv4 } from 'uuid'
 
 export interface ComponentProps {
   id: string
@@ -12,16 +11,7 @@ export interface EditerProps {
   components: ComponentProps[]
   currentElement: string
 }
-const componentsData: ComponentProps[] = [
-  {
-    id: uuidv4(),
-    props: {
-      text: '123',
-      color: 'red',
-    },
-    name: 'l-text',
-  },
-]
+const componentsData: ComponentProps[] = []
 
 const editer: Module<EditerProps, GlobalDataProps> = {
   state: {

@@ -8,7 +8,9 @@
     >
       <l-tetx v-bind="template"></l-tetx>
     </div>
-    <image-uploader @success="imageUploadHandle" />
+    <div class="component-item">
+      <image-uploader @success="imageUploadHandle" />
+    </div>
   </div>
 </template>
 

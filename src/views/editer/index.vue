@@ -1,20 +1,22 @@
 <template>
   <a-layout class="editer">
-    <a-layout-sider theme="light" width="350">
+    <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
     </a-layout-sider>
-    <a-layout-content>
-      <edite-wrapper
-        v-for="component of components"
-        :key="component.id"
-        :id="component.id"
-        :active="component.id === (currentElement && currentElement.id)"
-        @set-active="setActive"
-      >
-        <component :is="component.name" v-bind="component.props" />
-      </edite-wrapper>
+    <a-layout-content class="content">
+      <div class="content-inner">
+        <edite-wrapper
+          v-for="component of components"
+          :key="component.id"
+          :id="component.id"
+          :active="component.id === (currentElement && currentElement.id)"
+          @set-active="setActive"
+        >
+          <component :is="component.name" v-bind="component.props" />
+        </edite-wrapper>
+      </div>
     </a-layout-content>
-    <a-layout-sider theme="light" width="350">
+    <a-layout-sider theme="light" width="350" class="sider">
       <props-table :props="currentElement?.props" @change="handleChange" />
     </a-layout-sider>
   </a-layout>
@@ -74,5 +76,17 @@ export default defineComponent({
 <style lang="less" scoped>
 .editer {
   height: 100%;
+  .content {
+    height: 100%;
+    padding: 10px;
+    .content-inner {
+      height: 100%;
+      overflow-y: auto;
+      background: white;
+    }
+  }
+  .sider {
+    padding: 10px;
+  }
 }
 </style>

@@ -98,6 +98,8 @@ export default defineComponent({
 <style lang="less" scoped>
 .props-table-item {
   display: flex;
+  align-items: center;
+  padding: 5px 0;
 }
 .label {
   width: 30%;
