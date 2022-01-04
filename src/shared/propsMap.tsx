@@ -46,6 +46,51 @@ export const mapToPropsToForms: PropsToForms = {
       return parseInt(v)
     },
     afterTransform: (e: number) => (e ? `${e}px` : ''),
+    extarProps: {
+      min: 12,
+    },
+  },
+  fontWeight: {
+    component: 'icon-switch',
+    initalTransform(v: string) {
+      return v === 'bold'
+    },
+    afterTransform: (e: boolean) => {
+      return e ? 'bold' : ''
+    },
+    extarProps: {
+      tip: '加粗',
+      iconName: 'BoldOutlined',
+    },
+    valueProp: 'checked',
+  },
+  fontStyle: {
+    component: 'icon-switch',
+    initalTransform(v: string) {
+      return v === 'italic'
+    },
+    afterTransform: (e: boolean) => {
+      return e ? 'italic' : 'normal'
+    },
+    extarProps: {
+      tip: '斜体',
+      iconName: 'ItalicOutlined',
+    },
+    valueProp: 'checked',
+  },
+  textDecoration: {
+    component: 'icon-switch',
+    initalTransform(v: string) {
+      return v === 'underline'
+    },
+    afterTransform: (e: boolean) => {
+      return e ? 'underline' : 'none'
+    },
+    extarProps: {
+      tip: '下划线',
+      iconName: 'UnderlineOutlined',
+    },
+    valueProp: 'checked',
   },
   lineHeight: {
     component: 'a-slider',
@@ -102,38 +147,5 @@ export const mapToPropsToForms: PropsToForms = {
   color: {
     component: 'color-picker',
     text: '颜色',
-  },
-  fontWeight: {
-    component: 'icon-switch',
-    text: '加粗',
-    initalTransform(v: string) {
-      return v === 'bold'
-    },
-    afterTransform: (e: boolean) => {
-      return e ? 'bold' : ''
-    },
-    extarProps: {
-      tip: '加粗',
-    },
-  },
-  fontStyle: {
-    component: 'icon-switch',
-    text: '斜体',
-    initalTransform(v: string) {
-      return v === 'italic'
-    },
-    afterTransform: (e: boolean) => {
-      return e ? 'italic' : ''
-    },
-    subComponent: 'div',
-    options: [
-      {
-        value: false,
-        text: (<span style={{ 'font-style': 'italic' }}>I</span>) as VNode,
-      },
-    ],
-    extarProps: {
-      tip: '斜体',
-    },
   },
 }

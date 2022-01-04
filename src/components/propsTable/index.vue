@@ -1,6 +1,11 @@
 <template>
   <div>
-    <div v-for="(value, key) in finalProps" :key="key" class="props-table-item">
+    <div
+      v-for="(value, key) in finalProps"
+      :key="key"
+      :class="'props-table-item' + ' ' + value.component"
+      :id="`item-${key}`"
+    >
       <span class="label">{{ value.text }}</span>
       <component
         class="prop-component"
@@ -102,11 +107,21 @@ export default defineComponent({
   padding: 5px 0;
 }
 .label {
-  width: 30%;
+  width: 25%;
   flex: 1;
 }
 .prop-component {
-  width: 70%;
+  width: 75%;
   flex: 3;
+}
+.icon-switch {
+  display: inline-block;
+  margin-left: 80px;
+}
+#item-textDecoration {
+  margin-left: 20px;
+}
+#item-fontStyle {
+  margin-left: 20px;
 }
 </style>

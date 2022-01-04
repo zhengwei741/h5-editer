@@ -1,29 +1,38 @@
 <template>
-  <div class="icon-switch-warpper">
+  <div class="icon-switch-warpper" @click.prevent="handleClick">
     <a-tooltip placement="top">
       <template #title>
         <span>{{ tip }}</span>
       </template>
-      <div
-        class="icon-switch"
-        @click="onChange"
-        :class="val ? 'isClick' : 'unClick'"
-      >
-        <span class="text">
-          <slot>B</slot>
-        </span>
-      </div>
+      <a-button :type="checked ? 'primary' : 'default'" shape="circle">
+        <template v-slot:icon><component :is="iconName" /></template>
+      </a-button>
     </a-tooltip>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
+import {
+  BoldOutlined,
+  ItalicOutlined,
+  UnderlineOutlined,
+} from '@ant-design/icons-vue'
 
 export default defineComponent({
+  components: {
+    BoldOutlined,
+    ItalicOutlined,
+    UnderlineOutlined,
+  },
   props: {
-    value: {
+    iconName: {
+      type: String,
+      required: true,
+    },
+    checked: {
       type: Boolean,
+      default: false,
     },
     tip: {
       type: String,
@@ -31,44 +40,12 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, context) {
-    const val = ref(props.value)
-
-    const onChange = () => {
-      val.value = !val.value
-      context.emit('change', val.value)
+    const handleClick = () => {
+      context.emit('change', !props.checked)
     }
-
     return {
-      val,
-      onChange,
+      handleClick,
     }
   },
 })
 </script>
-<style lang="less" scoped>
-.icon-switch {
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #dddd;
-  cursor: pointer;
-  .text {
-    font-size: 30px;
-  }
-}
-.isClick {
-  background-color: #669eff;
-  .text {
-    color: white;
-  }
-}
-.unClick {
-  background-color: #fff;
-  .text {
-    color: #669eff;
-  }
-}
-</style>
