@@ -6,7 +6,7 @@
       :class="'props-table-item' + ' ' + value.component"
       :id="`item-${key}`"
     >
-      <span class="label">{{ value.text }}</span>
+      <span class="label" v-if="value.text">{{ value.text }}</span>
       <component
         class="prop-component"
         :is="value.component"
@@ -38,6 +38,7 @@ import RenderVnode from './renderVnode.vue'
 
 import ColorPicker from '@/components/colorPicker/index.vue'
 import IconSwitch from '@/components/IconSwitch/index.vue'
+import ImageProcesser from '@/components/imageProcesser/index.vue'
 
 interface FormProps extends PropToForm {
   value?: string
@@ -49,6 +50,7 @@ export default defineComponent({
     RenderVnode,
     ColorPicker,
     IconSwitch,
+    ImageProcesser,
   },
   props: {
     props: {

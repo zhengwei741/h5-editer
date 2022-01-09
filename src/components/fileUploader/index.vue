@@ -61,6 +61,8 @@ import {
   UploadOutlined,
 } from '@ant-design/icons-vue'
 
+import useExpose from '@/hooks/useExpose'
+
 type fileUploaderState = 'ready' | 'uploading' | 'success' | 'error'
 
 interface UploaderFile {
@@ -220,6 +222,12 @@ export default defineComponent({
     let events: { [key: string]: (e: any) => void } = {
       click: triggerUpload,
     }
+
+    // 把click事件暴露出去
+    useExpose({
+      ...events,
+    })
+
     // 拖拽事件
     if (props.drag) {
       events = {

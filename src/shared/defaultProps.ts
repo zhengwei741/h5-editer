@@ -113,3 +113,5 @@ export const textStylePropNames = without(
   'url',
   'text'
 )
+
+export type AllComponentProps = TextComponentProps & ImageComponentProps

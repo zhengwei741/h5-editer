@@ -6,13 +6,16 @@
     autoUpload
     @success="onSuccessHandle"
     @error="onErrorHandle"
+    ref="fileUploaderRef"
   >
     <template #uploading>
-      <a-button :loading="true" disabled>上传中</a-button>
+      <slot name="uploading">
+        <a-button :loading="true" disabled>上传中</a-button>
+      </slot>
     </template>
-    <template #default>
-      <a-button>上传图片</a-button>
-    </template>
+    <slot name="default">
+      <a-button>点击上传</a-button>
+    </slot>
   </FileUploader>
 </template>
 
@@ -45,6 +48,12 @@ export default defineComponent({
       // TODO
       this.onSuccessHandle(null)
       message.error('上传失败')
+    },
+    click() {
+      const fileUploaderRef = this.$refs.fileUploaderRef as any
+      if (fileUploaderRef && fileUploaderRef.click) {
+        fileUploaderRef.click()
+      }
     },
   },
 })
