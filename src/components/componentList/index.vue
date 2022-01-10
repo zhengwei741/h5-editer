@@ -44,6 +44,8 @@ export default defineComponent({
         props: clone(template),
         name: 'l-text',
         id: uuidv4(),
+        isHide: false,
+        isLock: false,
       })
     }
 

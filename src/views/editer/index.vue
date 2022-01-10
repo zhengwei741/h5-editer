@@ -9,6 +9,7 @@
           v-for="component of components"
           :key="component.id"
           :id="component.id"
+          :hidden="component.isHide"
           :active="component.id === (currentElement && currentElement.id)"
           @set-active="setActive"
         >
@@ -17,13 +18,34 @@
       </div>
     </a-layout-content>
     <a-layout-sider theme="light" width="350" class="sider">
-      <props-table :props="currentElement?.props" @change="handleChange" />
+      <a-tabs v-if="currentElement" type="card" v-model:activeKey="activePanel">
+        <a-tab-pane key="component" tab="属性设置">
+          <props-table
+            v-if="!currentElement.isLock"
+            :props="currentElement?.props"
+            @change="handleChange"
+          />
+          <a-empty v-else>
+            <template #description>
+              <span> 该图层已被锁定 </span>
+            </template>
+          </a-empty>
+        </a-tab-pane>
+        <a-tab-pane key="layer" tab="图层设置" force-render>
+          <layer-list
+            :componentList="components"
+            :selectedId="currentElement.id"
+            @clickItem="setActive"
+            @change="handleChange"
+          ></layer-list>
+        </a-tab-pane>
+      </a-tabs>
     </a-layout-sider>
   </a-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '@/store/index'
@@ -34,6 +56,7 @@ import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
 import EditeWrapper from '@/components/editeWrapper/index.vue'
 import PropsTable from '@/components/propsTable/index.vue'
+import LayerList from '@/components/layerList/index.vue'
 
 export default defineComponent({
   components: {
@@ -42,6 +65,7 @@ export default defineComponent({
     ComponentList,
     EditeWrapper,
     PropsTable,
+    LayerList,
   },
   setup() {
     const store = useStore<GlobalDataProps>()
@@ -62,12 +86,15 @@ export default defineComponent({
       store.commit('updateComponent', event)
     }
 
+    const activePanel = ref('component')
+
     return {
       components,
       deleteComponent,
       setActive,
       currentElement,
       handleChange,
+      activePanel,
     }
   },
 })

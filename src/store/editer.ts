@@ -5,6 +5,15 @@ export interface ComponentProps {
   id: string
   props: { [key: string]: string }
   name: string
+  isLock: boolean
+  isHide: boolean
+}
+
+export interface UpdateComponentData {
+  key: string
+  value: string | string[]
+  id: string
+  isRoot?: boolean
 }
 
 export interface EditerProps {
@@ -27,12 +36,16 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         (cmp) => cmp.id !== component.id
       )
     },
-    updateComponent(state, { key, value }) {
+    updateComponent(state, { key, value, isRoot, id }) {
       const updateComponent = state.components.find(
-        (component) => component.id === state.currentElement
+        (component) => component.id === (id || state.currentElement)
       )
-      if (updateComponent) {
-        updateComponent.props[key] = value
+      if (isRoot) {
+        ;(updateComponent as any)[key as string] = value
+      } else {
+        if (updateComponent) {
+          updateComponent.props[key] = value
+        }
       }
     },
     setActive(state, currentId: string) {

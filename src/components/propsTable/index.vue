@@ -1,31 +1,29 @@
 <template>
-  <div>
-    <div
-      v-for="(value, key) in finalProps"
-      :key="key"
-      :class="'props-table-item' + ' ' + value.component"
-      :id="`item-${key}`"
+  <div
+    v-for="(value, key) in finalProps"
+    :key="key"
+    :class="'props-table-item' + ' ' + value.component"
+    :id="`item-${key}`"
+  >
+    <span class="label" v-if="value.text">{{ value.text }}</span>
+    <component
+      class="prop-component"
+      :is="value.component"
+      :[value.valueProp]="value.value"
+      v-bind="value.extarProps"
+      v-on="value.events"
     >
-      <span class="label" v-if="value.text">{{ value.text }}</span>
-      <component
-        class="prop-component"
-        :is="value.component"
-        :[value.valueProp]="value.value"
-        v-bind="value.extarProps"
-        v-on="value.events"
-      >
-        <template v-if="value.options">
-          <component
-            :is="value.subComponent"
-            v-for="(option, index) in value.options"
-            :key="index"
-            :value="option.value"
-          >
-            <render-vnode :vNode="option.text" />
-          </component>
-        </template>
-      </component>
-    </div>
+      <template v-if="value.options">
+        <component
+          :is="value.subComponent"
+          v-for="(option, index) in value.options"
+          :key="index"
+          :value="option.value"
+        >
+          <render-vnode :vNode="option.text" />
+        </component>
+      </template>
+    </component>
   </div>
 </template>
 

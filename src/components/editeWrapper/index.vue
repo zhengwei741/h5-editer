@@ -2,7 +2,7 @@
   <div
     class="edit-wrapper"
     @click="onItemClick(id)"
-    :class="active ? 'active' : ''"
+    :class="{ active: active, hidden: hidden }"
   >
     <slot></slot>
   </div>
@@ -18,6 +18,9 @@ export default defineComponent({
       required: true,
     },
     active: {
+      type: Boolean,
+    },
+    hidden: {
       type: Boolean,
     },
   },

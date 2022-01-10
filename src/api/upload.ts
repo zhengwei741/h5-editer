@@ -1,4 +1,4 @@
-import Http from '@/utils/http'
+// import Http from '@/utils/http'
 
 export const uploadFile = function (data: any) {
   console.log(data)
