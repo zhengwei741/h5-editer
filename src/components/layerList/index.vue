@@ -35,14 +35,17 @@
         </a-button>
       </a-tooltip>
     </a-col>
-    <a-col :span="16">
-      <a-input v-model:value="component.layerName" placeholder="图层名" />
+    <a-col :span="16" class="edit-warpper">
+      <inline-edit
+        :value="component.layerName"
+        @change="(val) => handleChange(selectedId, 'layerName', val)"
+      ></inline-edit>
     </a-col>
   </a-row>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import {
   DragOutlined,
   LockOutlined,
@@ -51,6 +54,7 @@ import {
   EyeInvisibleOutlined,
 } from '@ant-design/icons-vue'
 import { ComponentProps } from '@/store/editer'
+import InlineEdit from '@/components/inlineEdit/index.vue'
 
 export default defineComponent({
   components: {
@@ -59,14 +63,16 @@ export default defineComponent({
     UnlockOutlined,
     EyeOutlined,
     EyeInvisibleOutlined,
+    InlineEdit,
   },
   props: {
     componentList: {
-      type: Array,
+      type: Array as PropType<ComponentProps[]>,
       required: true,
     },
     selectedId: {
       type: String,
+      required: true,
     },
   },
   emits: ['change', 'clickItem'],
@@ -75,7 +81,7 @@ export default defineComponent({
       emit('clickItem', component.id)
     }
 
-    const handleChange = (id: string, key: string, value: boolean) => {
+    const handleChange = (id: string, key: string, value: boolean | string) => {
       const data = {
         id,
         key,
@@ -99,7 +105,7 @@ export default defineComponent({
   margin-bottom: 5px;
 }
 .layer-item:hover {
-  border: 1px solid #1890ff;
+  background-color: #f0f5fa;
 }
 .active {
   border: 1px solid #1890ff;
@@ -113,5 +119,10 @@ export default defineComponent({
     cursor: pointer;
     flex: 1;
   }
+}
+.edit-warpper {
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
 }
 </style>

@@ -5,15 +5,9 @@ export interface ComponentProps {
   id: string
   props: { [key: string]: string }
   name: string
-  isLock: boolean
-  isHide: boolean
-}
-
-export interface UpdateComponentData {
-  key: string
-  value: string | string[]
-  id: string
-  isRoot?: boolean
+  isLock?: boolean
+  isHide?: boolean
+  layerName: string
 }
 
 export interface EditerProps {
@@ -29,6 +23,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
   },
   mutations: {
     addComponent(state, component) {
+      component.layerName = '图层' + (state.components.length + 1)
       state.components.push(component)
     },
     deleteComponent(state, component) {
@@ -42,6 +37,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       )
       if (isRoot) {
         ;(updateComponent as any)[key as string] = value
+        // updateComponent[key as keyof ComponentProps] = value
       } else {
         if (updateComponent) {
           updateComponent.props[key] = value
