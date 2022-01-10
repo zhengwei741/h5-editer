@@ -1,46 +1,71 @@
 <template>
   <a-layout class="editer">
-    <a-layout-sider theme="light" width="350">
+    <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
     </a-layout-sider>
-    <a-layout-content>
-      <edite-wrapper
-        v-for="component of components"
-        :key="component.id"
-        :id="component.id"
-        :active="component.id === (currentElement && currentElement.id)"
-        @set-active="setActive"
-      >
-        <component :is="component.name" v-bind="component.props" />
-      </edite-wrapper>
+    <a-layout-content class="content">
+      <div class="content-inner">
+        <edite-wrapper
+          v-for="component of components"
+          :key="component.id"
+          :id="component.id"
+          :hidden="component.isHide"
+          :active="component.id === (currentElement && currentElement.id)"
+          @set-active="setActive"
+        >
+          <component :is="component.name" v-bind="component.props" />
+        </edite-wrapper>
+      </div>
     </a-layout-content>
-    <a-layout-sider theme="light" width="350">
-      <props-table :props="currentElement?.props" @change="handleChange" />
-      <pre>
-        {{ currentElement?.props }}
-      </pre>
+    <a-layout-sider theme="light" width="350" class="sider">
+      <a-tabs v-if="currentElement" type="card" v-model:activeKey="activePanel">
+        <a-tab-pane key="component" tab="属性设置">
+          <props-table
+            v-if="!currentElement.isLock"
+            :props="currentElement?.props"
+            @change="handleChange"
+          />
+          <a-empty v-else>
+            <template #description>
+              <span> 该图层已被锁定 </span>
+            </template>
+          </a-empty>
+        </a-tab-pane>
+        <a-tab-pane key="layer" tab="图层设置" force-render>
+          <layer-list
+            :componentList="components"
+            :selectedId="currentElement.id"
+            @clickItem="setActive"
+            @change="handleChange"
+          ></layer-list>
+        </a-tab-pane>
+      </a-tabs>
     </a-layout-sider>
   </a-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '@/store/index'
 import { ComponentProps } from '@/store/editer'
 
 import LText from '@/components/LText/index.vue'
+import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
 import EditeWrapper from '@/components/editeWrapper/index.vue'
 import PropsTable from '@/components/propsTable/index.vue'
+import LayerList from '@/components/layerList/index.vue'
 
 export default defineComponent({
   components: {
     LText,
+    LImage,
     ComponentList,
     EditeWrapper,
     PropsTable,
+    LayerList,
   },
   setup() {
     const store = useStore<GlobalDataProps>()
@@ -61,12 +86,15 @@ export default defineComponent({
       store.commit('updateComponent', event)
     }
 
+    const activePanel = ref('component')
+
     return {
       components,
       deleteComponent,
       setActive,
       currentElement,
       handleChange,
+      activePanel,
     }
   },
 })
@@ -75,5 +103,17 @@ export default defineComponent({
 <style lang="less" scoped>
 .editer {
   height: 100%;
+  .content {
+    height: 100%;
+    padding: 10px;
+    .content-inner {
+      height: 100%;
+      overflow-y: auto;
+      background: white;
+    }
+  }
+  .sider {
+    padding: 10px;
+  }
 }
 </style>

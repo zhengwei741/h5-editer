@@ -1,25 +1,29 @@
 <template>
-  <div>
-    <div v-for="(value, key) in finalProps" :key="key" class="props-table-item">
-      <span class="label">{{ value.text }}</span>
-      <component
-        class="prop-component"
-        :is="value.component"
-        :[value.valueProp]="value.value"
-        v-bind="value.extarProps"
-        v-on="value.events"
-      >
-        <template v-if="value.options">
-          <component
-            :is="value.subComponent"
-            v-for="(option, index) in value.options"
-            :key="index"
-            :value="option.value"
-            >{{ option.text }}</component
-          >
-        </template>
-      </component>
-    </div>
+  <div
+    v-for="(value, key) in finalProps"
+    :key="key"
+    :class="'props-table-item' + ' ' + value.component"
+    :id="`item-${key}`"
+  >
+    <span class="label" v-if="value.text">{{ value.text }}</span>
+    <component
+      class="prop-component"
+      :is="value.component"
+      :[value.valueProp]="value.value"
+      v-bind="value.extarProps"
+      v-on="value.events"
+    >
+      <template v-if="value.options">
+        <component
+          :is="value.subComponent"
+          v-for="(option, index) in value.options"
+          :key="index"
+          :value="option.value"
+        >
+          <render-vnode :vNode="option.text" />
+        </component>
+      </template>
+    </component>
   </div>
 </template>
 
@@ -28,6 +32,11 @@ import { defineComponent, computed, PropType } from 'vue'
 import { reduce } from 'lodash-es'
 import { TextComponentProps } from '@/shared/defaultProps'
 import { PropToForm, PropsToForms, mapToPropsToForms } from '@/shared/propsMap'
+import RenderVnode from './renderVnode.vue'
+
+import ColorPicker from '@/components/colorPicker/index.vue'
+import IconSwitch from '@/components/IconSwitch/index.vue'
+import ImageProcesser from '@/components/imageProcesser/index.vue'
 
 interface FormProps extends PropToForm {
   value?: string
@@ -35,6 +44,12 @@ interface FormProps extends PropToForm {
 }
 
 export default defineComponent({
+  components: {
+    RenderVnode,
+    ColorPicker,
+    IconSwitch,
+    ImageProcesser,
+  },
   props: {
     props: {
       type: Object as PropType<TextComponentProps>,
@@ -88,13 +103,25 @@ export default defineComponent({
 <style lang="less" scoped>
 .props-table-item {
   display: flex;
+  align-items: center;
+  padding: 5px 0;
 }
 .label {
-  width: 30%;
+  width: 25%;
   flex: 1;
 }
 .prop-component {
-  width: 70%;
+  width: 75%;
   flex: 3;
+}
+.icon-switch {
+  display: inline-block;
+  margin-left: 80px;
+}
+#item-textDecoration {
+  margin-left: 20px;
+}
+#item-fontStyle {
+  margin-left: 20px;
 }
 </style>

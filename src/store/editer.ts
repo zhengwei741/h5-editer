@@ -1,27 +1,20 @@
 import { Module } from 'vuex'
 import { GlobalDataProps } from './index'
-import { v4 as uuidv4 } from 'uuid'
 
 export interface ComponentProps {
   id: string
   props: { [key: string]: string }
   name: string
+  isLock?: boolean
+  isHide?: boolean
+  layerName: string
 }
 
 export interface EditerProps {
   components: ComponentProps[]
   currentElement: string
 }
-const componentsData: ComponentProps[] = [
-  {
-    id: uuidv4(),
-    props: {
-      text: '123',
-      color: 'red',
-    },
-    name: 'l-text',
-  },
-]
+const componentsData: ComponentProps[] = []
 
 const editer: Module<EditerProps, GlobalDataProps> = {
   state: {
@@ -30,19 +23,25 @@ const editer: Module<EditerProps, GlobalDataProps> = {
   },
   mutations: {
     addComponent(state, component) {
+      component.layerName = '图层' + (state.components.length + 1)
       state.components.push(component)
     },
     deleteComponent(state, component) {
       state.components = state.components.filter(
-        (cmp) => cmp.id === component.id
+        (cmp) => cmp.id !== component.id
       )
     },
-    updateComponent(state, { key, value }) {
+    updateComponent(state, { key, value, isRoot, id }) {
       const updateComponent = state.components.find(
-        (component) => component.id === state.currentElement
+        (component) => component.id === (id || state.currentElement)
       )
-      if (updateComponent) {
-        updateComponent.props[key] = value
+      if (isRoot) {
+        ;(updateComponent as any)[key as string] = value
+        // updateComponent[key as keyof ComponentProps] = value
+      } else {
+        if (updateComponent) {
+          updateComponent.props[key] = value
+        }
       }
     },
     setActive(state, currentId: string) {
@@ -51,9 +50,6 @@ const editer: Module<EditerProps, GlobalDataProps> = {
   },
   actions: {},
   getters: {
-    getEditer(state) {
-      return state
-    },
     getCurrentElement(state) {
       return state.components.find((comp) => comp.id === state.currentElement)
     },

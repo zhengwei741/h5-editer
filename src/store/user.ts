@@ -26,7 +26,7 @@ const user: Module<UserProps, GlobalDataProps> = {
       commit('loginOut')
     },
     login({ commit }) {
-      commit('login')
+      commit('login', { userName: 'test' })
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve('登录成功')

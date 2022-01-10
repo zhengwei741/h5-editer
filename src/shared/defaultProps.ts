@@ -39,13 +39,13 @@ export interface TextComponentProps extends CommonDefaultProps {
 
 import { mapValues, without } from 'lodash-es'
 
-export const CommonDefaultProps: CommonDefaultProps = {
+export const commonDefaultProps: CommonDefaultProps = {
   // actions
   actionType: '',
   url: '',
   // size
   height: '',
-  width: '373px',
+  width: '100%',
   paddingLeft: '0px',
   paddingRight: '0px',
   paddingTop: '0px',
@@ -76,7 +76,7 @@ export const TextComponentProps: TextComponentProps = {
   textAlign: '',
   color: '',
   backgroundColor: '',
-  ...CommonDefaultProps,
+  ...commonDefaultProps,
 }
 
 export const textDefaultProps = without(
@@ -86,13 +86,32 @@ export const textDefaultProps = without(
   'text'
 )
 
-export const transformToComponentProps = <T extends CommonDefaultProps>(
-  props: T
-) => {
-  return mapValues(props, function (item) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const transformToComponentProps = <T extends {}>(props: T) => {
+  return mapValues(props, (item) => {
     return {
       type: (item as any).constructor as StringConstructor,
       default: item,
     }
   })
 }
+
+export interface ImageComponentProps extends CommonDefaultProps {
+  src: string
+}
+export const imageDefaultProps: ImageComponentProps = {
+  src: '',
+  ...commonDefaultProps,
+}
+export const imageStylePropsNames = without(
+  Object.keys(imageDefaultProps),
+  'src'
+)
+export const textStylePropNames = without(
+  Object.keys(textDefaultProps),
+  'actionType',
+  'url',
+  'text'
+)
+
+export type AllComponentProps = TextComponentProps & ImageComponentProps
