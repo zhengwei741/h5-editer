@@ -31,6 +31,9 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         (cmp) => cmp.id !== component.id
       )
     },
+    updateComponentList(state, list) {
+      state.components = list
+    },
     updateComponent(state, { key, value, isRoot, id }) {
       const updateComponent = state.components.find(
         (component) => component.id === (id || state.currentElement)

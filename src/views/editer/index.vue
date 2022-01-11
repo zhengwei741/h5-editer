@@ -83,7 +83,11 @@ export default defineComponent({
     }
 
     const handleChange = (event: any) => {
-      store.commit('updateComponent', event)
+      if (Array.isArray(event)) {
+        store.commit('updateComponentList', event)
+      } else {
+        store.commit('updateComponent', event)
+      }
     }
 
     const activePanel = ref('component')
