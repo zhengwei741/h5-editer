@@ -62,7 +62,7 @@ export default defineComponent({
         originalValue.value = innerValue.value
         emit('change', innerValue.value)
       }
-      isOutside.value = false
+      // isOutside.value = false
     })
 
     const clickHandle = () => {

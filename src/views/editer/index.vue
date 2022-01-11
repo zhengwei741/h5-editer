@@ -20,11 +20,13 @@
     <a-layout-sider theme="light" width="350" class="sider">
       <a-tabs v-if="currentElement" type="card" v-model:activeKey="activePanel">
         <a-tab-pane key="component" tab="属性设置">
-          <props-table
-            v-if="!currentElement.isLock"
-            :props="currentElement?.props"
-            @change="handleChange"
-          />
+          <div v-if="!currentElement.isLock">
+            <edit-group :props="currentElement?.props" @change="handleChange" />
+            <!-- <props-table
+              :props="currentElement?.props"
+              @change="handleChange"
+            ></props-table> -->
+          </div>
           <a-empty v-else>
             <template #description>
               <span> 该图层已被锁定 </span>
@@ -55,6 +57,7 @@ import LText from '@/components/LText/index.vue'
 import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
 import EditeWrapper from '@/components/editeWrapper/index.vue'
+import EditGroup from '@/components/editGroup/index.vue'
 import PropsTable from '@/components/propsTable/index.vue'
 import LayerList from '@/components/layerList/index.vue'
 
@@ -64,8 +67,9 @@ export default defineComponent({
     LImage,
     ComponentList,
     EditeWrapper,
-    PropsTable,
+    EditGroup,
     LayerList,
+    PropsTable,
   },
   setup() {
     const store = useStore<GlobalDataProps>()

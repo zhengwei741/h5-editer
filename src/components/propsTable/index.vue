@@ -30,7 +30,7 @@
 <script lang="ts">
 import { defineComponent, computed, PropType } from 'vue'
 import { reduce } from 'lodash-es'
-import { TextComponentProps } from '@/shared/defaultProps'
+import { AllComponentProps } from '@/shared/defaultProps'
 import { PropToForm, PropsToForms, mapToPropsToForms } from '@/shared/propsMap'
 import RenderVnode from './renderVnode.vue'
 
@@ -52,7 +52,7 @@ export default defineComponent({
   },
   props: {
     props: {
-      type: Object as PropType<TextComponentProps>,
+      type: Object as PropType<AllComponentProps>,
     },
   },
   emits: ['change'],
