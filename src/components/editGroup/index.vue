@@ -94,10 +94,9 @@ export default defineComponent({
         }
       })
     })
-    const handleChange = () => {
-      emit('change', arguments)
+    const handleChange = (e: any) => {
+      emit('change', e)
     }
-
     return {
       editGroups,
       activeKey,
