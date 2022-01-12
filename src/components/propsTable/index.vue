@@ -37,6 +37,7 @@ import RenderVnode from './renderVnode.vue'
 import ColorPicker from '@/components/colorPicker/index.vue'
 import IconSwitch from '@/components/IconSwitch/index.vue'
 import ImageProcesser from '@/components/imageProcesser/index.vue'
+import ShadowPicker from '@/components/shadowPicker/index.vue'
 
 interface FormProps extends PropToForm {
   value?: string
@@ -49,6 +50,7 @@ export default defineComponent({
     ColorPicker,
     IconSwitch,
     ImageProcesser,
+    ShadowPicker,
   },
   props: {
     props: {
