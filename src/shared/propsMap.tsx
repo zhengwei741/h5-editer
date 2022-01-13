@@ -197,6 +197,27 @@ const position = {
   },
 }
 
+const page = {
+  'background-image': {
+    component: 'background-processer',
+    initalTransform: (v: string) => {
+      if (v) {
+        const reg = /\(["'](.+)["']\)/g
+        const matches = reg.exec(v)
+        if (matches && matches.length > 1) {
+          console.log(matches)
+          return matches[1]
+        } else {
+          return ''
+        }
+      } else {
+        return ''
+      }
+    },
+    afterTransform: (e: string) => `url("${e}")`,
+  },
+}
+
 export const mapToPropsToForms: PropsToForms = {
   text: {
     component: 'a-input',
@@ -322,4 +343,5 @@ export const mapToPropsToForms: PropsToForms = {
   ...border,
   ...shadow,
   ...position,
+  ...page,
 }

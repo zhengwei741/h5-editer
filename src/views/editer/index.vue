@@ -4,7 +4,7 @@
       <component-list />
     </a-layout-sider>
     <a-layout-content class="content">
-      <div class="content-inner">
+      <div class="content-inner" :style="page.props">
         <edite-wrapper
           v-for="component of components"
           :key="component.id"
@@ -22,10 +22,6 @@
         <a-tab-pane key="component" tab="属性设置">
           <div v-if="!currentElement.isLock">
             <edit-group :props="currentElement?.props" @change="handleChange" />
-            <!-- <props-table
-              :props="currentElement?.props"
-              @change="handleChange"
-            ></props-table> -->
           </div>
           <a-empty v-else>
             <template #description>
@@ -40,6 +36,9 @@
             @clickItem="setActive"
             @change="handleChange"
           ></layer-list>
+        </a-tab-pane>
+        <a-tab-pane key="background" tab="背景设置" force-render>
+          <props-table :props="page.props" @change="onPageHandleChange" />
         </a-tab-pane>
       </a-tabs>
     </a-layout-sider>
@@ -58,8 +57,8 @@ import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
 import EditeWrapper from '@/components/editeWrapper/index.vue'
 import EditGroup from '@/components/editGroup/index.vue'
-import PropsTable from '@/components/propsTable/index.vue'
 import LayerList from '@/components/layerList/index.vue'
+import PropsTable from '@/components/propsTable/index.vue'
 
 export default defineComponent({
   components: {
@@ -77,6 +76,8 @@ export default defineComponent({
     const components = computed(() => store.state.editer.components)
 
     const currentElement = computed(() => store.getters.getCurrentElement)
+
+    const page = computed(() => store.state.editer.page)
 
     const deleteComponent = (component: ComponentProps) => {
       store.commit('deleteComponent', component)
@@ -96,6 +97,10 @@ export default defineComponent({
 
     const activePanel = ref('component')
 
+    const onPageHandleChange = (e: any) => {
+      store.commit('updatePage', e)
+    }
+
     return {
       components,
       deleteComponent,
@@ -103,6 +108,8 @@ export default defineComponent({
       currentElement,
       handleChange,
       activePanel,
+      page,
+      onPageHandleChange,
     }
   },
 })

@@ -43,6 +43,12 @@
             裁剪图片
           </template>
         </a-button>
+        <a-button v-if="showDelete" shape="round" danger @click="deletePic">
+          <template #icon>
+            <DeleteOutlined />
+            删除图片
+          </template>
+        </a-button>
       </a-col>
     </a-row>
   </div>
@@ -67,6 +73,9 @@ export default defineComponent({
     value: {
       type: String,
       default: '',
+    },
+    showDelete: {
+      type: Boolean,
     },
   },
   components: {
@@ -137,6 +146,11 @@ export default defineComponent({
         'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnimg.ws.126.net%2F%3Furl%3Dhttp%3A%2F%2Fdingyue.ws.126.net%2F2021%2F0916%2Fef325777j00qziup0009gc000uj00j1m.jpg%26thumbnail%3D650x2147483647%26quality%3D80%26type%3Djpg&refer=http%3A%2F%2Fnimg.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1644330592&t=b0ddfb6c855ee479cc289e5f4b94eb3f'
       )
     }
+
+    const deletePic = () => {
+      emit('change', '')
+    }
+
     return {
       visible,
       imageRef,
@@ -144,6 +158,7 @@ export default defineComponent({
       handleOk,
       previewStyle,
       onUploadeSuccess,
+      deletePic,
     }
   },
 })
