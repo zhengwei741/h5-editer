@@ -198,6 +198,10 @@ const position = {
 }
 
 const page = {
+  'background-color': {
+    component: 'color-picker',
+    text: '背景颜色',
+  },
   'background-image': {
     component: 'background-processer',
     initalTransform: (v: string) => {
@@ -215,6 +219,27 @@ const page = {
       }
     },
     afterTransform: (e: string) => `url("${e}")`,
+  },
+  'background-repeat': {
+    component: 'a-select',
+    subComponent: 'a-select-option',
+    text: '背景重复',
+    options: [
+      { text: '无', value: 'no-repeat' },
+      { text: 'X轴重复', value: 'repeat-x' },
+      { text: 'Y轴重复', value: 'repeat-y' },
+      { text: '全部重复', value: 'repeat' },
+    ],
+  },
+  'background-size': {
+    component: 'a-select',
+    subComponent: 'a-select-option',
+    text: '背景缩放',
+    options: [
+      { text: '默认', value: '' },
+      { text: '自动缩放', value: 'contain' },
+      { text: '默认填充', value: 'cover' },
+    ],
   },
 }
 
