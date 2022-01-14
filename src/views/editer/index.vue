@@ -4,7 +4,7 @@
       <component-list />
     </a-layout-sider>
     <a-layout-content class="content">
-      <div class="content-inner" :style="page.props">
+      <div class="content-inner" :style="page.props" id="editerContent">
         <edite-wrapper
           v-for="component of components"
           :key="component.id"
@@ -121,14 +121,21 @@ export default defineComponent({
   .content {
     height: 100%;
     padding: 10px;
+    position: relative;
     .content-inner {
       height: 100%;
       overflow-y: auto;
       background: white;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 375px;
     }
   }
   .sider {
     padding: 10px;
+    overflow-y: auto;
   }
 }
 </style>
