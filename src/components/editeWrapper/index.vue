@@ -13,7 +13,11 @@
       <div class="resizer resizer-top-left"></div>
       <div class="resizer resizer-top-right"></div>
       <div class="resizer resizer-bottom-left"></div>
-      <div class="resizer resizer-bottom-right"></div>
+      <div
+        class="resizer resizer-bottom-right"
+        @mousedown.stop="(e) => onResizerMousedown('bottom-right')"
+        @mouseup="onResizerMouseUp"
+      ></div>
     </div>
   </div>
 </template>
@@ -41,10 +45,14 @@ export default defineComponent({
     }
     const top = ref(20)
     const left = ref(20)
+    const height = ref<number | string>('')
+    const width = ref<number | string>('')
     const wrapperStyle = computed(() => {
       return {
         top: `${top.value}px`,
         left: `${left.value}px`,
+        height: `${height.value ? height.value : ''}px`,
+        width: `${width.value ? width.value : ''}px`,
       }
     })
     const paddingLeft = ref(0)
@@ -62,14 +70,52 @@ export default defineComponent({
     const onMouseup = () => {
       document.removeEventListener('mousemove', move)
     }
-    const editerContent = document.getElementById('editerContent')
+    const editerContent = document.getElementById(
+      'editerContent'
+    ) as HTMLElement
     const rect = editerContent?.getBoundingClientRect()
     const move = (e: MouseEvent) => {
+      e.preventDefault()
       if (rect) {
         const { pageX, pageY } = e
         left.value = pageX - rect.left - paddingLeft.value
-        top.value = pageY - rect.top - paddingTop.value
+        top.value =
+          pageY - rect.top - paddingTop.value + editerContent?.scrollTop
       }
+    }
+    let dir = ref('')
+    const calculateLocation = (position: any) => {
+      if (wrapperRef.value) {
+        let { left, top } = wrapperRef.value.getBoundingClientRect()
+        let { x, y } = position
+        switch (dir.value) {
+          case 'bottom-right':
+            return {
+              width: x - left,
+              height: y - top,
+            }
+          default:
+            break
+        }
+      }
+    }
+    const onResizerMousedown = (direction: string) => {
+      dir.value = direction
+      document.addEventListener('mousemove', resizerMove)
+    }
+    const resizerMove = (e: MouseEvent) => {
+      e.preventDefault()
+      const rect = calculateLocation({
+        x: e.pageX,
+        y: e.pageY,
+      })
+      if (rect) {
+        height.value = rect.height
+        width.value = rect.width
+      }
+    }
+    const onResizerMouseUp = () => {
+      document.removeEventListener('mousemove', resizerMove)
     }
 
     return {
@@ -78,41 +124,13 @@ export default defineComponent({
       onMousedown,
       onMouseup,
       wrapperRef,
+      onResizerMousedown,
+      onResizerMouseUp,
     }
   },
 })
 </script>
 <style lang="less" scoped>
-.resizer-wapper {
-  .resizer {
-    height: 10px;
-    width: 10px;
-    border-radius: 50%;
-    position: absolute;
-    background: #fff;
-    border: 3px solid #1890ff;
-  }
-  .resizer-top-left {
-    top: -5px;
-    left: -5px;
-    cursor: nwse-resize;
-  }
-  .resizer-top-right {
-    top: -5px;
-    right: -5px;
-    cursor: nesw-resize;
-  }
-  .resizer-bottom-left {
-    bottom: -5px;
-    left: -5px;
-    cursor: nesw-resize;
-  }
-  .resizer-bottom-right {
-    bottom: -5px;
-    right: -5px;
-    cursor: nwse-resize;
-  }
-}
 .edit-wrapper {
   padding: 0px;
   cursor: pointer;
@@ -144,5 +162,36 @@ export default defineComponent({
 }
 .edit-wrapper.active .resizers {
   display: block;
+}
+.resizer-wapper {
+  position: absolute;
+  .resizer {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    position: absolute;
+    background: #fff;
+    border: 3px solid #1890ff;
+  }
+  .resizer-top-left {
+    top: -5px;
+    left: -5px;
+    cursor: nwse-resize;
+  }
+  .resizer-top-right {
+    top: -5px;
+    right: -5px;
+    cursor: nesw-resize;
+  }
+  .resizer-bottom-left {
+    bottom: -5px;
+    left: -5px;
+    cursor: nesw-resize;
+  }
+  .resizer-bottom-right {
+    bottom: -5px;
+    right: -5px;
+    cursor: nwse-resize;
+  }
 }
 </style>
