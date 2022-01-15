@@ -11,7 +11,7 @@ export interface ComponentProps {
   layerName: string
 }
 
-export interface BackgroundProps {
+export interface PageProps {
   'background-color': string
   'background-image': string
   'background-repeat': string
@@ -20,7 +20,7 @@ export interface BackgroundProps {
 }
 
 export interface PageData {
-  props: BackgroundProps
+  props?: PageProps
 }
 
 const pageDefaultProps = {
@@ -35,7 +35,7 @@ const pageData: PageData = {
   props: pageDefaultProps,
 }
 
-export type AllFormProps = AllComponentProps & BackgroundProps
+export type AllFormProps = PageProps & Partial<AllComponentProps>
 
 export interface EditerProps {
   components: ComponentProps[]
@@ -84,11 +84,13 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       state.currentElement = currentId
     },
     updatePage(state, { key, value, isRoot }) {
-      const newKey = key as keyof BackgroundProps
+      const newKey = key as keyof PageProps
       if (isRoot) {
         console.log(1)
       } else {
-        state.page.props[newKey] = value
+        if (state.page.props) {
+          state.page.props[newKey] = value
+        }
       }
     },
   },

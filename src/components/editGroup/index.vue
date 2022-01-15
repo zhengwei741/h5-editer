@@ -13,6 +13,7 @@
 <script lang="ts">
 import { defineComponent, PropType, computed, ref } from 'vue'
 import { AllComponentProps } from '../../shared/defaultProps'
+import { AllFormProps } from '@/store/editer'
 import { difference } from 'lodash-es'
 import PropsTable from '@/components/propsTable/index.vue'
 
@@ -87,7 +88,7 @@ export default defineComponent({
           const key = current as keyof AllComponentProps
           prve[key] = props.props[key] || ''
           return prve
-        }, {} as AllComponentProps)
+        }, {} as AllFormProps)
         return {
           text: groups.text,
           props: groupsProps,

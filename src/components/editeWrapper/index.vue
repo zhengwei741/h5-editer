@@ -3,27 +3,41 @@
     class="edit-wrapper"
     @click="onItemClick(id)"
     :class="{ active: active, hidden: hidden }"
-    :style="wrapperStyle"
-    @mousedown="onMousedown"
-    @mouseup="onMouseup"
-    ref="wrapperRef"
+    @mousedown="startMove"
+    ref="editWrapper"
   >
     <slot></slot>
     <div class="resizer-wapper" v-if="active">
-      <div class="resizer resizer-top-left"></div>
-      <div class="resizer resizer-top-right"></div>
-      <div class="resizer resizer-bottom-left"></div>
+      <div
+        class="resizer resizer-top-left"
+        @mousedown.stop="startResize('top-left')"
+      ></div>
+      <div
+        class="resizer resizer-top-right"
+        @mousedown.stop="startResize('top-right')"
+      ></div>
+      <div
+        class="resizer resizer-bottom-left"
+        @mousedown.stop="startResize('bottom-left')"
+      ></div>
       <div
         class="resizer resizer-bottom-right"
-        @mousedown.stop="(e) => onResizerMousedown('bottom-right')"
-        @mouseup="onResizerMouseUp"
+        @mousedown.stop="startResize('bottom-right')"
       ></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, ref, nextTick } from 'vue'
+
+type ResizeDirection = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+interface OriginalPositions {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
 
 export default defineComponent({
   props: {
@@ -43,89 +57,115 @@ export default defineComponent({
     const onItemClick = (id: string) => {
       emit('set-active', id)
     }
-    const top = ref(20)
-    const left = ref(20)
-    const height = ref<number | string>('')
-    const width = ref<number | string>('')
-    const wrapperStyle = computed(() => {
+    const gap = {
+      x: 0,
+      y: 0,
+    }
+    const editWrapper = ref<null | HTMLElement>(null)
+
+    const caculateMovePosition = (e: MouseEvent) => {
+      const container = document.getElementById('editerContent') as HTMLElement
+      const containerRect = container.getBoundingClientRect()
+      const left = e.clientX - gap.x - containerRect.left
+      const top = e.clientY - gap.y - containerRect.top + container.scrollTop
       return {
-        top: `${top.value}px`,
-        left: `${left.value}px`,
-        height: `${height.value ? height.value : ''}px`,
-        width: `${width.value ? width.value : ''}px`,
-      }
-    })
-    const paddingLeft = ref(0)
-    const paddingTop = ref(0)
-    const wrapperRef = ref<null | HTMLElement>(null)
-    const onMousedown = (e: MouseEvent) => {
-      if (wrapperRef.value && rect) {
-        const { pageX, pageY } = e
-        const wrapperRefRect = wrapperRef.value.getBoundingClientRect()
-        paddingLeft.value = pageX - wrapperRefRect.left
-        paddingTop.value = pageY - wrapperRefRect.top
-        document.addEventListener('mousemove', move)
+        left,
+        top,
       }
     }
-    const onMouseup = () => {
-      document.removeEventListener('mousemove', move)
+
+    const startMove = (e: MouseEvent) => {
+      const currentElement = editWrapper.value as HTMLElement
+      if (currentElement) {
+        const { left, top } = currentElement.getBoundingClientRect()
+        gap.x = e.pageX - left
+        gap.y = e.pageY - top
+      }
+
+      const handleMove = (e: MouseEvent) => {
+        e.preventDefault()
+        const { left, top } = caculateMovePosition(e)
+        currentElement.style.left = `${left}px`
+        currentElement.style.top = `${top}px`
+      }
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMove)
+        nextTick(() => {
+          document.removeEventListener('mouseup', handleMouseUp)
+        })
+      }
+      document.addEventListener('mousemove', handleMove)
+      document.addEventListener('mouseup', handleMouseUp)
     }
-    const editerContent = document.getElementById(
-      'editerContent'
-    ) as HTMLElement
-    const rect = editerContent?.getBoundingClientRect()
-    const move = (e: MouseEvent) => {
-      e.preventDefault()
-      if (rect) {
-        const { pageX, pageY } = e
-        left.value = pageX - rect.left - paddingLeft.value
-        top.value =
-          pageY - rect.top - paddingTop.value + editerContent?.scrollTop
+
+    const caculateSize = (
+      direction: ResizeDirection,
+      e: MouseEvent,
+      positions: OriginalPositions
+    ) => {
+      const container = document.getElementById('editerContent') as HTMLElement
+      const containerRect = container.getBoundingClientRect()
+      switch (direction) {
+        case 'bottom-right':
+          return {
+            width: e.clientX - positions.left,
+            height: e.clientY - positions.top,
+          }
+        case 'top-right':
+          return {
+            top: e.clientY - containerRect.top,
+            width: e.clientX - positions.left,
+            height: positions.bottom - e.clientY,
+          }
+        case 'bottom-left':
+          return {
+            left: e.clientX - containerRect.left,
+            width: positions.right - e.clientX,
+            height: e.clientY - positions.top,
+          }
+        case 'top-left':
+          return {
+            top: e.clientY - containerRect.top,
+            left: e.clientX - containerRect.left,
+            width: positions.right - e.clientX,
+            height: positions.bottom - e.clientY,
+          }
       }
     }
-    let dir = ref('')
-    const calculateLocation = (position: any) => {
-      if (wrapperRef.value) {
-        let { left, top } = wrapperRef.value.getBoundingClientRect()
-        let { x, y } = position
-        switch (dir.value) {
-          case 'bottom-right':
-            return {
-              width: x - left,
-              height: y - top,
-            }
-          default:
-            break
+
+    const startResize = (direction: ResizeDirection) => {
+      const currentElement = editWrapper.value as HTMLElement
+      const { left, right, top, bottom } =
+        currentElement.getBoundingClientRect()
+      const handleMove = (e: MouseEvent) => {
+        const size = caculateSize(direction, e, { left, right, top, bottom })
+        const { style } = currentElement
+        if (size) {
+          style.width = size.width + 'px'
+          style.height = size.height + 'px'
+          if (size.left) {
+            style.left = size.left + 'px'
+          }
+          if (size.top) {
+            style.top = size.top + 'px'
+          }
         }
       }
-    }
-    const onResizerMousedown = (direction: string) => {
-      dir.value = direction
-      document.addEventListener('mousemove', resizerMove)
-    }
-    const resizerMove = (e: MouseEvent) => {
-      e.preventDefault()
-      const rect = calculateLocation({
-        x: e.pageX,
-        y: e.pageY,
-      })
-      if (rect) {
-        height.value = rect.height
-        width.value = rect.width
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMove)
+        nextTick(() => {
+          document.removeEventListener('mouseup', handleMouseUp)
+        })
       }
-    }
-    const onResizerMouseUp = () => {
-      document.removeEventListener('mousemove', resizerMove)
+      document.addEventListener('mousemove', handleMove)
+      document.addEventListener('mouseup', handleMouseUp)
     }
 
     return {
       onItemClick,
-      wrapperStyle,
-      onMousedown,
-      onMouseup,
-      wrapperRef,
-      onResizerMousedown,
-      onResizerMouseUp,
+      editWrapper,
+      startMove,
+      startResize,
     }
   },
 })
