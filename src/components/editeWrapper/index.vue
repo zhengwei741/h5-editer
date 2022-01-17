@@ -4,6 +4,7 @@
     @click="onItemClick(id)"
     :class="{ active: active, hidden: hidden }"
     @mousedown="startMove"
+    :style="styles"
     ref="editWrapper"
   >
     <slot></slot>
@@ -29,7 +30,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, nextTick } from 'vue'
+import { defineComponent, ref, nextTick, computed } from 'vue'
+import { pick } from 'lodash-es'
 
 type ResizeDirection = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 interface OriginalPositions {
@@ -41,6 +43,9 @@ interface OriginalPositions {
 
 export default defineComponent({
   props: {
+    props: {
+      type: Object,
+    },
     id: {
       type: String,
       required: true,
@@ -52,7 +57,7 @@ export default defineComponent({
       type: Boolean,
     },
   },
-  emits: ['set-active'],
+  emits: ['set-active', 'update-position'],
   setup(props, { emit }) {
     const onItemClick = (id: string) => {
       emit('set-active', id)
@@ -65,6 +70,7 @@ export default defineComponent({
 
     const caculateMovePosition = (e: MouseEvent) => {
       const container = document.getElementById('editerContent') as HTMLElement
+      debugger
       const containerRect = container.getBoundingClientRect()
       const left = e.clientX - gap.x - containerRect.left
       const top = e.clientY - gap.y - containerRect.top + container.scrollTop
@@ -88,8 +94,10 @@ export default defineComponent({
         currentElement.style.left = `${left}px`
         currentElement.style.top = `${top}px`
       }
-      const handleMouseUp = () => {
+      const handleMouseUp = (e: MouseEvent) => {
         document.removeEventListener('mousemove', handleMove)
+        const size = caculateMovePosition(e)
+        emit('update-position', { ...size, id: props.id })
         nextTick(() => {
           document.removeEventListener('mouseup', handleMouseUp)
         })
@@ -151,8 +159,10 @@ export default defineComponent({
           }
         }
       }
-      const handleMouseUp = () => {
+      const handleMouseUp = (e: MouseEvent) => {
         document.removeEventListener('mousemove', handleMove)
+        const size = caculateSize(direction, e, { left, right, top, bottom })
+        emit('update-position', { ...size, id: props.id })
         nextTick(() => {
           document.removeEventListener('mouseup', handleMouseUp)
         })
@@ -161,16 +171,21 @@ export default defineComponent({
       document.addEventListener('mouseup', handleMouseUp)
     }
 
+    const styles = computed(() =>
+      pick(props.props, ['position', 'top', 'left', 'width', 'height'])
+    )
+
     return {
       onItemClick,
       editWrapper,
       startMove,
       startResize,
+      styles,
     }
   },
 })
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .edit-wrapper {
   padding: 0px;
   cursor: pointer;

@@ -168,7 +168,7 @@ const shadow = {
 
 const position = {
   left: {
-    component: 'a-slider',
+    component: 'a-input-number',
     text: 'X 轴坐标',
     initalTransform(v: string) {
       if (!v) {
@@ -182,7 +182,7 @@ const position = {
     afterTransform: (e: number) => e.toString() + 'px',
   },
   top: {
-    component: 'a-slider',
+    component: 'a-input-number',
     text: 'Y 轴坐标',
     initalTransform(v: string) {
       if (!v) {

@@ -11,7 +11,9 @@
           :id="component.id"
           :hidden="component.isHide"
           :active="component.id === (currentElement && currentElement.id)"
+          :props="component.props"
           @set-active="setActive"
+          @update-position="updatePosition"
         >
           <component :is="component.name" v-bind="component.props" />
         </edite-wrapper>
@@ -52,6 +54,8 @@ import { useStore } from 'vuex'
 import { GlobalDataProps } from '@/store/index'
 import { ComponentProps } from '@/store/editer'
 
+import initHotKeys from '@/plugins/hotKeys'
+
 import LText from '@/components/LText/index.vue'
 import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
@@ -71,6 +75,8 @@ export default defineComponent({
     PropsTable,
   },
   setup() {
+    initHotKeys()
+
     const store = useStore<GlobalDataProps>()
 
     const components = computed(() => store.state.editer.components)
@@ -101,6 +107,18 @@ export default defineComponent({
       store.commit('updatePage', e)
     }
 
+    const updatePosition = (pos: any) => {
+      Object.keys(pos)
+        .filter((v) => v !== 'id')
+        .forEach((key) => {
+          store.commit('updateComponent', {
+            key,
+            id: pos.id,
+            value: pos[key] + '',
+          })
+        })
+    }
+
     return {
       components,
       deleteComponent,
@@ -110,6 +128,7 @@ export default defineComponent({
       activePanel,
       page,
       onPageHandleChange,
+      updatePosition,
     }
   },
 })

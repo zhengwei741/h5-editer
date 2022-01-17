@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { clone } from 'lodash-es'
 
 import LTetx from '../LText/index.vue'
-import { defaultTextTemplates } from '@/shared/defaultTemplates'
+import defaultTextTemplates from '@/shared/defaultTemplates'
 import {
   CommonDefaultProps,
   imageDefaultProps,
@@ -83,6 +83,11 @@ export default defineComponent({
     justify-content: center;
     cursor: pointer;
     padding: 5px;
+  }
+}
+.component-item {
+  * {
+    position: static !important;
   }
 }
 </style>
