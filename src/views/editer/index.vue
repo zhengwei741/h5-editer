@@ -1,4 +1,5 @@
 <template>
+  <OperateList />
   <a-layout class="editer">
     <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
@@ -56,6 +57,8 @@ import { ComponentProps } from '@/store/editer'
 
 import initHotKeys from '@/plugins/hotKeys'
 
+import OperateList from '@/components/operateList/index.vue'
+
 import LText from '@/components/LText/index.vue'
 import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
@@ -73,6 +76,7 @@ export default defineComponent({
     EditGroup,
     LayerList,
     PropsTable,
+    OperateList,
   },
   setup() {
     initHotKeys()
@@ -108,15 +112,13 @@ export default defineComponent({
     }
 
     const updatePosition = (pos: any) => {
-      Object.keys(pos)
-        .filter((v) => v !== 'id')
-        .forEach((key) => {
-          store.commit('updateComponent', {
-            key,
-            id: pos.id,
-            value: pos[key] + '',
-          })
-        })
+      const key = Object.keys(pos)
+      const value = Object.values(pos).map((v) => v + 'px')
+      store.commit('updateComponent', {
+        key,
+        id: pos.id,
+        value,
+      })
     }
 
     return {

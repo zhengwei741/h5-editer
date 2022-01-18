@@ -68,9 +68,10 @@ export default defineComponent({
     }
     const editWrapper = ref<null | HTMLElement>(null)
 
+    let isMoving = false
+
     const caculateMovePosition = (e: MouseEvent) => {
       const container = document.getElementById('editerContent') as HTMLElement
-      debugger
       const containerRect = container.getBoundingClientRect()
       const left = e.clientX - gap.x - containerRect.left
       const top = e.clientY - gap.y - containerRect.top + container.scrollTop
@@ -89,6 +90,7 @@ export default defineComponent({
       }
 
       const handleMove = (e: MouseEvent) => {
+        isMoving = true
         e.preventDefault()
         const { left, top } = caculateMovePosition(e)
         currentElement.style.left = `${left}px`
@@ -96,8 +98,11 @@ export default defineComponent({
       }
       const handleMouseUp = (e: MouseEvent) => {
         document.removeEventListener('mousemove', handleMove)
-        const size = caculateMovePosition(e)
-        emit('update-position', { ...size, id: props.id })
+        if (isMoving) {
+          const size = caculateMovePosition(e)
+          emit('update-position', { ...size, id: props.id })
+          isMoving = false
+        }
         nextTick(() => {
           document.removeEventListener('mouseup', handleMouseUp)
         })

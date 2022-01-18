@@ -41,38 +41,79 @@ const pageData: PageData = {
 
 export type AllFormProps = PageProps & Partial<AllComponentProps>
 
+export type historyType = 'add' | 'delete' | 'modify'
+
+export type HistoryData = {
+  type: historyType
+  id?: string
+  data?: any
+}
+
+export interface history {
+  data: HistoryData[]
+  historyIndex: number
+}
+
 export interface EditerProps {
   components: ComponentProps[]
   currentElement: string
   page: PageData
   copyElement?: ComponentProps | null
+  history: history
+}
+
+export interface updateComponentData {
+  key: Array<keyof AllComponentProps> | keyof AllComponentProps
+  value: string[] | string
+  isRoot: boolean
+  id: string
 }
 
 type DirectionType = 'up' | 'down' | 'left' | 'right'
 
 const componentsData: ComponentProps[] = []
 
+const pushHistory = function (state: EditerProps, historyData: HistoryData) {
+  state.history.data.push(historyData)
+}
+
 const editer: Module<EditerProps, GlobalDataProps> = {
   state: {
     components: componentsData,
+    // 选中组件
     currentElement: '',
     page: pageData,
+    // 快捷键拷贝副本
     copyElement: null,
+    // 历史记录
+    history: {
+      data: [],
+      historyIndex: -1,
+    },
   },
   mutations: {
     addComponent(state, component) {
       component.layerName = '图层' + (state.components.length + 1)
       state.components.push(component)
+      pushHistory(state, {
+        type: 'add',
+        id: component.id,
+      })
     },
     deleteComponent(state, component) {
       state.components = state.components.filter(
         (cmp) => cmp.id !== component.id
       )
+      pushHistory(state, {
+        type: 'delete',
+        data: component,
+        id: component.id,
+      })
     },
     updateComponentList(state, list) {
       state.components = list
     },
-    updateComponent(state, { key, value, isRoot, id }) {
+    updateComponent(state, { key, value, isRoot, id }: updateComponentData) {
       if (!key) {
         return
       }
@@ -84,8 +125,26 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         // updateComponent[key as keyof ComponentProps] = value
       } else {
         if (updateComponent) {
-          const newKey = key as keyof AllFormProps
-          updateComponent.props[newKey] = value
+          const oldValue = Array.isArray(key)
+            ? key.map((item) => updateComponent.props[item])
+            : updateComponent.props[key]
+
+          pushHistory(state, {
+            type: 'modify',
+            data: {
+              key,
+              oldValue,
+            },
+            id: updateComponent.id,
+          })
+
+          if (typeof key === 'string' && typeof value === 'string') {
+            updateComponent.props[key] = value
+          } else if (Array.isArray(key) && Array.isArray(value)) {
+            key.forEach((item, index) => {
+              updateComponent.props[item] = value[index]
+            })
+          }
         }
       }
     },
@@ -112,6 +171,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         message.info('已拷贝当前图层')
       }
     },
+    // 粘贴
     paste(state) {
       const copyElement = cloneDeep(state.copyElement)
       if (copyElement) {
@@ -167,6 +227,38 @@ const editer: Module<EditerProps, GlobalDataProps> = {
           default:
             break
         }
+      }
+    },
+    // 重做
+    redo() {
+      console.log(1)
+    },
+    // 撤销
+    undo(state) {
+      // eslint-disable-next-line prefer-const
+      let { data, historyIndex } = state.history
+      if (historyIndex === -1) {
+        historyIndex = data.length - 1
+      } else {
+        historyIndex--
+      }
+      // 取出最后的动作
+      const historyData = data[historyIndex]
+      state.history.historyIndex = historyIndex
+      switch (historyData.type) {
+        // 删除添加的组件
+        case 'add':
+          state.components = state.components.filter(
+            (comp) => comp.id !== historyData.id
+          )
+          break
+        // 恢复删除的组件
+        case 'delete':
+          state.components.push(cloneDeep(historyData.data))
+          break
+        // 恢复修改的属性
+        case 'modify':
+          break
       }
     },
   },
