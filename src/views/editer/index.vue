@@ -112,7 +112,7 @@ export default defineComponent({
     }
 
     const updatePosition = (pos: any) => {
-      const key = Object.keys(pos)
+      const key = Object.keys(pos).filter((key) => key !== 'id')
       const value = Object.values(pos).map((v) => v + 'px')
       store.commit('updateComponent', {
         key,

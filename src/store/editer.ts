@@ -2,7 +2,7 @@ import { Module } from 'vuex'
 import { GlobalDataProps } from './index'
 import { AllComponentProps } from '@/shared/defaultProps'
 import store from '@/store'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, debounce } from 'lodash-es'
 import { v4 as uuidv4 } from 'uuid'
 import { message } from 'ant-design-vue'
 
@@ -52,6 +52,7 @@ export type HistoryData = {
 export interface history {
   data: HistoryData[]
   historyIndex: number
+  cacheOldValue: Array<string>
 }
 
 export interface EditerProps {
@@ -73,8 +74,37 @@ type DirectionType = 'up' | 'down' | 'left' | 'right'
 
 const componentsData: ComponentProps[] = []
 
-const pushHistory = function (state: EditerProps, historyData: HistoryData) {
-  state.history.data.push(historyData)
+const pushHistory = (state: EditerProps, historyData: HistoryData) => {
+  // 如果进行撤销
+  const { history } = state
+  if (history.historyIndex !== -1) {
+    // 清空之后所有的历史记录
+    history.data.splice(history.historyIndex)
+    // 重置historyIndex
+    // -1 撤销 执行最后一个历史记录 不能重做
+    history.historyIndex = -1
+  }
+  history.data.push(historyData)
+  history.cacheOldValue = []
+}
+
+const pushHistoryDebounce = debounce(pushHistory, 300)
+
+const modifyHistory = (
+  historyData: HistoryData,
+  state: EditerProps,
+  type: string
+) => {
+  const { key, oldValue, newValue } = historyData.data
+  const find = state.components.find(
+    (component) => component.id === historyData.id
+  )
+  if (find) {
+    const newKey = key as Array<keyof AllComponentProps>
+    newKey.forEach((k, index) => {
+      find.props[k] = type === 'undo' ? oldValue[index] : newValue[index]
+    })
+  }
 }
 
 const editer: Module<EditerProps, GlobalDataProps> = {
@@ -89,6 +119,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
     history: {
       data: [],
       historyIndex: -1,
+      cacheOldValue: [],
     },
   },
   mutations: {
@@ -98,6 +129,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       pushHistory(state, {
         type: 'add',
         id: component.id,
+        data: component,
       })
     },
     deleteComponent(state, component) {
@@ -126,14 +158,18 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       } else {
         if (updateComponent) {
           const oldValue = Array.isArray(key)
-            ? key.map((item) => updateComponent.props[item])
-            : updateComponent.props[key]
+            ? key.map((item) => updateComponent.props[item] as string)
+            : [updateComponent.props[key] as string]
 
-          pushHistory(state, {
+          if (!state.history.cacheOldValue.length) {
+            state.history.cacheOldValue = oldValue
+          }
+          pushHistoryDebounce(state, {
             type: 'modify',
             data: {
-              key,
-              oldValue,
+              key: Array.isArray(key) ? key : [key],
+              oldValue: state.history.cacheOldValue,
+              newValue: Array.isArray(value) ? value : [value],
             },
             id: updateComponent.id,
           })
@@ -230,8 +266,27 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       }
     },
     // 重做
-    redo() {
-      console.log(1)
+    redo(state) {
+      // eslint-disable-next-line prefer-const
+      let { data, historyIndex } = state.history
+      const historyData = data[historyIndex]
+      switch (historyData.type) {
+        // 删除添加的组件
+        case 'add':
+          state.components.push(cloneDeep(historyData.data))
+          break
+        // 恢复删除的组件
+        case 'delete':
+          state.components = state.components.filter(
+            (comp) => comp.id !== historyData.id
+          )
+          break
+        // 恢复修改的属性
+        case 'modify':
+          modifyHistory(historyData, state, 'redo')
+          break
+      }
+      state.history.historyIndex++
     },
     // 撤销
     undo(state) {
@@ -258,6 +313,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
           break
         // 恢复修改的属性
         case 'modify':
+          modifyHistory(historyData, state, 'undo')
           break
       }
     },
@@ -266,6 +322,15 @@ const editer: Module<EditerProps, GlobalDataProps> = {
   getters: {
     getCurrentElement(state) {
       return state.components.find((comp) => comp.id === state.currentElement)
+    },
+    redoDisabled(state) {
+      return (
+        state.history.historyIndex === state.history.data.length ||
+        state.history.historyIndex === -1
+      )
+    },
+    undoDisabled(state) {
+      return state.history.data.length === 0 || state.history.historyIndex === 0
     },
   },
 }

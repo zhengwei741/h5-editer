@@ -1,18 +1,22 @@
 <template>
   <a-tooltip>
     <template #title> 撤销 </template>
-    <a-button shape="circle" @click="undoHistory">
+    <a-button shape="circle" @click="undoHistory" :disabled="undoDisabled">
       <template #icon><UndoOutlined /> </template>
     </a-button>
   </a-tooltip>
   <a-tooltip>
     <template #title> 重做 </template>
-    <a-button shape="circle" @click="redoHistory">
+    <a-button shape="circle" @click="redoHistory" :disabled="redoDisabled">
       <template #icon><RedoOutlined /> </template>
     </a-button>
   </a-tooltip>
   <ul class="operateList">
-    operateList
+    cacheOldValue(
+    {{
+      history.cacheOldValue
+    }}
+    )
     <li
       v-for="(item, index) in history"
       :class="{ active: index === historyIndex }"
@@ -47,14 +51,20 @@ export default defineComponent({
     }
 
     const redoHistory = () => {
-      console.log(1)
+      store.commit('redo')
     }
+
+    const undoDisabled = computed(() => store.getters.undoDisabled)
+
+    const redoDisabled = computed(() => store.getters.redoDisabled)
 
     return {
       history,
       historyIndex,
       undoHistory,
       redoHistory,
+      undoDisabled,
+      redoDisabled,
     }
   },
 })
