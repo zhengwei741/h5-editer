@@ -59,7 +59,7 @@ export const commonDefaultProps: CommonDefaultProps = {
   boxShadow: '0 0 0 #000000',
   opacity: '1',
   // position and x,y
-  position: 'relative', //  absolute
+  position: 'absolute', //  absolute
   left: '0',
   top: '0',
   right: '0',

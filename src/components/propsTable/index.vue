@@ -30,13 +30,15 @@
 <script lang="ts">
 import { defineComponent, computed, PropType } from 'vue'
 import { reduce } from 'lodash-es'
-import { TextComponentProps } from '@/shared/defaultProps'
+import { AllFormProps } from '@/store/editer'
 import { PropToForm, PropsToForms, mapToPropsToForms } from '@/shared/propsMap'
 import RenderVnode from './renderVnode.vue'
 
 import ColorPicker from '@/components/colorPicker/index.vue'
 import IconSwitch from '@/components/IconSwitch/index.vue'
 import ImageProcesser from '@/components/imageProcesser/index.vue'
+import ShadowPicker from '@/components/shadowPicker/index.vue'
+import BackgroundProcesser from '@/components/backgroundProcesser/index.vue'
 
 interface FormProps extends PropToForm {
   value?: string
@@ -49,10 +51,12 @@ export default defineComponent({
     ColorPicker,
     IconSwitch,
     ImageProcesser,
+    ShadowPicker,
+    BackgroundProcesser,
   },
   props: {
     props: {
-      type: Object as PropType<TextComponentProps>,
+      type: Object as PropType<AllFormProps>,
     },
   },
   emits: ['change'],

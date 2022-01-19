@@ -1,17 +1,20 @@
 <template>
+  <OperateList />
   <a-layout class="editer">
     <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
     </a-layout-sider>
     <a-layout-content class="content">
-      <div class="content-inner">
+      <div class="content-inner" :style="page.props" id="editerContent">
         <edite-wrapper
           v-for="component of components"
           :key="component.id"
           :id="component.id"
           :hidden="component.isHide"
           :active="component.id === (currentElement && currentElement.id)"
+          :props="component.props"
           @set-active="setActive"
+          @update-position="updatePosition"
         >
           <component :is="component.name" v-bind="component.props" />
         </edite-wrapper>
@@ -20,11 +23,9 @@
     <a-layout-sider theme="light" width="350" class="sider">
       <a-tabs v-if="currentElement" type="card" v-model:activeKey="activePanel">
         <a-tab-pane key="component" tab="属性设置">
-          <props-table
-            v-if="!currentElement.isLock"
-            :props="currentElement?.props"
-            @change="handleChange"
-          />
+          <div v-if="!currentElement.isLock">
+            <edit-group :props="currentElement?.props" @change="handleChange" />
+          </div>
           <a-empty v-else>
             <template #description>
               <span> 该图层已被锁定 </span>
@@ -39,6 +40,9 @@
             @change="handleChange"
           ></layer-list>
         </a-tab-pane>
+        <a-tab-pane key="background" tab="背景设置" force-render>
+          <props-table :props="page.props" @change="onPageHandleChange" />
+        </a-tab-pane>
       </a-tabs>
     </a-layout-sider>
   </a-layout>
@@ -51,12 +55,17 @@ import { useStore } from 'vuex'
 import { GlobalDataProps } from '@/store/index'
 import { ComponentProps } from '@/store/editer'
 
+import initHotKeys from '@/plugins/hotKeys'
+
+import OperateList from '@/components/operateList/index.vue'
+
 import LText from '@/components/LText/index.vue'
 import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
 import EditeWrapper from '@/components/editeWrapper/index.vue'
-import PropsTable from '@/components/propsTable/index.vue'
+import EditGroup from '@/components/editGroup/index.vue'
 import LayerList from '@/components/layerList/index.vue'
+import PropsTable from '@/components/propsTable/index.vue'
 
 export default defineComponent({
   components: {
@@ -64,15 +73,21 @@ export default defineComponent({
     LImage,
     ComponentList,
     EditeWrapper,
-    PropsTable,
+    EditGroup,
     LayerList,
+    PropsTable,
+    OperateList,
   },
   setup() {
+    initHotKeys()
+
     const store = useStore<GlobalDataProps>()
 
     const components = computed(() => store.state.editer.components)
 
     const currentElement = computed(() => store.getters.getCurrentElement)
+
+    const page = computed(() => store.state.editer.page)
 
     const deleteComponent = (component: ComponentProps) => {
       store.commit('deleteComponent', component)
@@ -83,10 +98,28 @@ export default defineComponent({
     }
 
     const handleChange = (event: any) => {
-      store.commit('updateComponent', event)
+      if (Array.isArray(event)) {
+        store.commit('updateComponentList', event)
+      } else {
+        store.commit('updateComponent', event)
+      }
     }
 
     const activePanel = ref('component')
+
+    const onPageHandleChange = (e: any) => {
+      store.commit('updatePage', e)
+    }
+
+    const updatePosition = (pos: any) => {
+      const key = Object.keys(pos).filter((key) => key !== 'id')
+      const value = Object.values(pos).map((v) => v + 'px')
+      store.commit('updateComponent', {
+        key,
+        id: pos.id,
+        value,
+      })
+    }
 
     return {
       components,
@@ -95,6 +128,9 @@ export default defineComponent({
       currentElement,
       handleChange,
       activePanel,
+      page,
+      onPageHandleChange,
+      updatePosition,
     }
   },
 })
@@ -106,14 +142,21 @@ export default defineComponent({
   .content {
     height: 100%;
     padding: 10px;
+    position: relative;
     .content-inner {
       height: 100%;
       overflow-y: auto;
       background: white;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 375px;
     }
   }
   .sider {
     padding: 10px;
+    overflow-y: auto;
   }
 }
 </style>

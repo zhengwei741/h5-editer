@@ -33,6 +33,216 @@ const fontFamilyOptions = fontFamilyArr.map((font) => {
   }
 })
 
+const size = {
+  // 尺寸
+  height: {
+    component: 'a-input-number',
+    text: '高度',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '36'
+      }
+      return parseInt(v)
+    },
+    afterTransform: (e: number) => (e ? `${e}px` : ''),
+  },
+  width: {
+    component: 'a-input-number',
+    text: '宽度',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '36'
+      }
+      return parseInt(v)
+    },
+    afterTransform: (e: number) => (e ? `${e}px` : ''),
+  },
+  paddingLeft: {
+    component: 'a-input-number',
+    text: '左边距',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      return parseInt(v)
+    },
+    afterTransform: (e: number) => (e ? `${e}px` : ''),
+  },
+  paddingRight: {
+    component: 'a-input-number',
+    text: '右边距',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      return parseInt(v)
+    },
+    afterTransform: (e: number) => (e ? `${e}px` : ''),
+  },
+  paddingTop: {
+    component: 'a-input-number',
+    text: '上边距',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      return parseInt(v)
+    },
+    afterTransform: (e: number) => (e ? `${e}px` : ''),
+  },
+  paddingBottom: {
+    component: 'a-input-number',
+    text: '下边距',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      return parseInt(v)
+    },
+    afterTransform: (e: number) => (e ? `${e}px` : ''),
+  },
+}
+
+const border = {
+  borderStyle: {
+    component: 'a-select',
+    subComponent: 'a-select-option',
+    text: '边框样式',
+    options: [
+      { text: '无', value: 'none' },
+      { text: '实线', value: 'solid' },
+      { text: '虚线', value: 'dotted' },
+      { text: '破折现', value: 'dashed' },
+    ],
+    initalTransform(v: string) {
+      if (!v) {
+        v = 'none'
+      }
+      return v
+    },
+  },
+  borderColor: {
+    component: 'color-picker',
+    text: '边框颜色',
+  },
+  borderWidth: {
+    component: 'a-slider',
+    text: '边框宽度',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      if (v.length > 3) {
+        v = v.substring(0, v.length - 2)
+      }
+      return parseFloat(v)
+    },
+    afterTransform: (e: number) => e.toString() + 'px',
+  },
+  borderRadius: {
+    component: 'a-slider',
+    text: '边框圆角',
+    extarProps: {
+      max: 100,
+      min: 0,
+      step: 1,
+    },
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      if (v.length >= 3) {
+        v = v.substring(0, v.length - 2)
+      }
+      return parseFloat(v)
+    },
+    afterTransform: (e: number) => e.toString() + 'px',
+  },
+}
+
+const shadow = {
+  boxShadow: {
+    component: 'shadow-picker',
+  },
+}
+
+const position = {
+  left: {
+    component: 'a-input-number',
+    text: 'X 轴坐标',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      if (v.length > 3) {
+        v = v.substring(0, v.length - 2)
+      }
+      return parseFloat(v)
+    },
+    afterTransform: (e: number) => e.toString() + 'px',
+  },
+  top: {
+    component: 'a-input-number',
+    text: 'Y 轴坐标',
+    initalTransform(v: string) {
+      if (!v) {
+        v = '0'
+      }
+      if (v.length > 3) {
+        v = v.substring(0, v.length - 2)
+      }
+      return parseFloat(v)
+    },
+    afterTransform: (e: number) => e.toString() + 'px',
+  },
+}
+
+const page = {
+  'background-color': {
+    component: 'color-picker',
+    text: '背景颜色',
+  },
+  'background-image': {
+    component: 'background-processer',
+    initalTransform: (v: string) => {
+      if (v) {
+        const reg = /\(["'](.+)["']\)/g
+        const matches = reg.exec(v)
+        if (matches && matches.length > 1) {
+          console.log(matches)
+          return matches[1]
+        } else {
+          return ''
+        }
+      } else {
+        return ''
+      }
+    },
+    afterTransform: (e: string) => `url("${e}")`,
+  },
+  'background-repeat': {
+    component: 'a-select',
+    subComponent: 'a-select-option',
+    text: '背景重复',
+    options: [
+      { text: '无', value: 'no-repeat' },
+      { text: 'X轴重复', value: 'repeat-x' },
+      { text: 'Y轴重复', value: 'repeat-y' },
+      { text: '全部重复', value: 'repeat' },
+    ],
+  },
+  'background-size': {
+    component: 'a-select',
+    subComponent: 'a-select-option',
+    text: '背景缩放',
+    options: [
+      { text: '默认', value: '' },
+      { text: '自动缩放', value: 'contain' },
+      { text: '默认填充', value: 'cover' },
+    ],
+  },
+}
+
 export const mapToPropsToForms: PropsToForms = {
   text: {
     component: 'a-input',
@@ -140,6 +350,9 @@ export const mapToPropsToForms: PropsToForms = {
       step: 1,
     },
     initalTransform(v: string) {
+      if (!v) {
+        v = '1'
+      }
       return parseFloat(v) * 100
     },
     afterTransform: (e: number) => (e / 100).toString(),
@@ -151,4 +364,9 @@ export const mapToPropsToForms: PropsToForms = {
   src: {
     component: 'image-processer',
   },
+  ...size,
+  ...border,
+  ...shadow,
+  ...position,
+  ...page,
 }

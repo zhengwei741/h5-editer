@@ -1,46 +1,24 @@
-export const defaultTextTemplates = [
+import { TextComponentProps } from '@/shared/defaultProps'
+
+const defaultTextTemplates = [
   {
     text: '大标题',
     fontSize: '30px',
-    fontFamily: '',
     fontWeight: 'bold',
-    fontStyle: '',
-    textDecoration: '',
     tag: 'h2',
-    name: 'l-text',
-    lineHeight: '1',
-    textAlign: 'center',
-    opacity: '1',
-    borderStyle: 'solid',
+    width: '100px',
   },
   {
     text: '正文内容',
     tag: 'p',
-    name: 'l-text',
-    textAlign: 'center',
-    lineHeight: '1',
-    opacity: '1',
-    borderStyle: 'solid',
-    fontSize: '30px',
-    fontFamily: '',
-    fontWeight: 'bold',
-    fontStyle: '',
-    textDecoration: '',
+    width: '100px',
   },
   {
     text: '链接内容',
     color: '#1890ff',
+    textDecoration: 'underline',
     tag: 'p',
-    name: 'l-text',
-    textAlign: 'center',
-    lineHeight: '1',
-    opacity: '1',
-    borderStyle: 'solid',
-    fontSize: '30px',
-    fontFamily: '',
-    fontWeight: 'bold',
-    fontStyle: '',
-    textDecoration: '',
+    width: '100px',
   },
   {
     text: '按钮内容',
@@ -54,10 +32,15 @@ export const defaultTextTemplates = [
     paddingRight: '10px',
     paddingTop: '5px',
     paddingBottom: '5px',
+    width: '150px',
     tag: 'button',
     textAlign: 'center',
-    position: 'relative',
-    name: 'l-text',
-    fontSize: '30px',
+    position: 'absolute',
   },
 ]
+export default defaultTextTemplates.map((item) => {
+  return {
+    ...TextComponentProps,
+    ...item,
+  }
+})

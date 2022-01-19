@@ -1,4 +1,4 @@
-# iop-lego
+# low-code
 
 ## Project setup
 ```

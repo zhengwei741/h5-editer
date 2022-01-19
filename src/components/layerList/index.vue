@@ -1,51 +1,60 @@
 <template>
-  <a-row
-    v-for="component in componentList"
-    :key="component.id"
-    class="layer-item"
-    @click="onClickHandle(component)"
-    :class="selectedId === component.id ? 'active' : ''"
-  >
-    <a-col :span="8" class="layer-operate">
-      <a-tooltip title="拖动排序">
-        <a-button shape="circle" class="handle">
-          <template v-slot:icon><DragOutlined /> </template
-        ></a-button>
-      </a-tooltip>
-      <a-tooltip :title="component.isHide ? '显示' : '隐藏'">
-        <a-button
-          shape="circle"
-          @click.stop="handleChange(component.id, 'isHide', !component.isHide)"
-        >
-          <template v-slot:icon v-if="component.isHide"
-            ><EyeOutlined />
-          </template>
-          <template v-slot:icon v-else><EyeInvisibleOutlined /> </template>
-        </a-button>
-      </a-tooltip>
-      <a-tooltip :title="component.isLock ? '解锁' : '锁定'">
-        <a-button
-          shape="circle"
-          @click.stop="handleChange(component.id, 'isLock', !component.isLock)"
-        >
-          <template v-slot:icon v-if="component.isLock"
-            ><UnlockOutlined />
-          </template>
-          <template v-slot:icon v-else><LockOutlined /> </template>
-        </a-button>
-      </a-tooltip>
-    </a-col>
-    <a-col :span="16" class="edit-warpper">
-      <inline-edit
-        :value="component.layerName"
-        @change="(val) => handleChange(selectedId, 'layerName', val)"
-      ></inline-edit>
-    </a-col>
-  </a-row>
+  <draggable v-model="list" handle=".handle" animation="300" @end="onEnd">
+    <a-row
+      v-for="component in list"
+      :key="component.id"
+      class="layer-item"
+      @click="onClickHandle(component)"
+      :class="selectedId === component.id ? 'active' : ''"
+    >
+      <a-col :span="6" class="layer-operate">
+        <a-tooltip :title="component.isHide ? '显示' : '隐藏'">
+          <a-button
+            shape="circle"
+            @click.stop="
+              handleChange(component.id, 'isHide', !component.isHide)
+            "
+          >
+            <template v-slot:icon v-if="component.isHide"
+              ><EyeOutlined />
+            </template>
+            <template v-slot:icon v-else><EyeInvisibleOutlined /> </template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip :title="component.isLock ? '解锁' : '锁定'">
+          <a-button
+            shape="circle"
+            @click.stop="
+              handleChange(component.id, 'isLock', !component.isLock)
+            "
+          >
+            <template v-slot:icon v-if="component.isLock"
+              ><UnlockOutlined />
+            </template>
+            <template v-slot:icon v-else><LockOutlined /> </template>
+          </a-button>
+        </a-tooltip>
+      </a-col>
+      <a-col :span="14" class="edit-warpper">
+        <inline-edit
+          :value="component.layerName"
+          @change="(val) => handleChange(selectedId, 'layerName', val)"
+        ></inline-edit>
+      </a-col>
+      <a-col :span="4">
+        <a-tooltip title="拖动排序">
+          <a-button shape="circle" class="handle">
+            <template v-slot:icon><DragOutlined /> </template
+          ></a-button>
+        </a-tooltip>
+      </a-col>
+    </a-row>
+  </draggable>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
+import { VueDraggableNext } from 'vue-draggable-next'
 import {
   DragOutlined,
   LockOutlined,
@@ -64,6 +73,7 @@ export default defineComponent({
     EyeOutlined,
     EyeInvisibleOutlined,
     InlineEdit,
+    Draggable: VueDraggableNext,
   },
   props: {
     componentList: {
@@ -81,6 +91,8 @@ export default defineComponent({
       emit('clickItem', component.id)
     }
 
+    const list = ref(props.componentList)
+
     const handleChange = (id: string, key: string, value: boolean | string) => {
       const data = {
         id,
@@ -91,9 +103,15 @@ export default defineComponent({
       emit('change', data)
     }
 
+    const onEnd = () => {
+      emit('change', list.value)
+    }
+
     return {
+      list,
       onClickHandle,
       handleChange,
+      onEnd,
     }
   },
 })
