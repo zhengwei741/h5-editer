@@ -11,12 +11,7 @@
       <template #icon><RedoOutlined /> </template>
     </a-button>
   </a-tooltip>
-  <ul class="operateList">
-    cacheOldValue(
-    {{
-      history.cacheOldValue
-    }}
-    )
+  <!-- <ul class="operateList">
     <li
       v-for="(item, index) in history"
       :class="{ active: index === historyIndex }"
@@ -24,7 +19,7 @@
     >
       {{ item.type }} - {{ item.data && item.data.key }}
     </li>
-  </ul>
+  </ul> -->
 </template>
 
 <script lang="ts">
@@ -70,13 +65,13 @@ export default defineComponent({
 })
 </script>
 <style lang="less">
-.operateList {
-  position: fixed;
-  z-index: 999;
-  right: 0;
-  background-color: white;
-  .active {
-    color: red;
-  }
-}
+// .operateList {
+//   position: fixed;
+//   z-index: 999;
+//   right: 0;
+//   background-color: white;
+//   .active {
+//     color: red;
+//   }
+// }
 </style>
