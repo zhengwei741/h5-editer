@@ -198,8 +198,16 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       }
     },
     // 快捷键
-    copy(state) {
-      const currentElement = store.getters.getCurrentElement
+    copy(state, cid) {
+      let currentElement
+      if (cid) {
+        currentElement = state.components.find(
+          (component) => component.id === cid
+        )
+      }
+      if (!currentElement) {
+        currentElement = store.getters.getCurrentElement
+      }
       if (currentElement) {
         const copyElement = cloneDeep(currentElement)
         copyElement.id = uuidv4()
@@ -275,6 +283,9 @@ const editer: Module<EditerProps, GlobalDataProps> = {
     },
     // 重做
     redo(state) {
+      if (store.getters.redoDisabled) {
+        return
+      }
       // eslint-disable-next-line prefer-const
       let { data, historyIndex } = state.history
       const historyData = data[historyIndex]
@@ -298,6 +309,9 @@ const editer: Module<EditerProps, GlobalDataProps> = {
     },
     // 撤销
     undo(state) {
+      if (store.getters.undoDisabled) {
+        return
+      }
       // eslint-disable-next-line prefer-const
       let { data, historyIndex } = state.history
       if (historyIndex === -1) {

@@ -49,6 +49,12 @@ const initHotKeys = () => {
       store.commit('move', { direction: 'right', value: 1 })
     })
   )
+  useHotKeys('ctrl+z', () => {
+    store.commit('undo')
+  })
+  useHotKeys('ctrl+y', () => {
+    store.commit('redo')
+  })
 }
 
 export default initHotKeys

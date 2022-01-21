@@ -11,8 +11,8 @@ const initMenus = () => {
     {
       label: '拷贝图层',
       hotKey: 'ctrl+c, command+c',
-      action() {
-        store.commit('copy')
+      action(cid) {
+        store.commit('copy', cid)
       },
     },
     {
