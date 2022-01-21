@@ -224,7 +224,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
           (component) => component.id === cid
         )
       }
-      if (currentElement) {
+      if (!currentElement) {
         currentElement = store.getters.getCurrentElement
       }
       if (currentElement) {

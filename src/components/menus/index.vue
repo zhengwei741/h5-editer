@@ -8,13 +8,16 @@
         class="ant-dropdown-menu ant-dropdown-menu-root ant-dropdown-menu-vertical ant-dropdown-menu-light"
       >
         <li
-          class="ant-dropdown-menu-item ant-dropdown-menu-item-only-child"
+          class="ant-dropdown-menu-item ant-dropdown-menu-item-only-child item"
           v-for="(menu, index) in menus"
           :key="index"
           @click="onMenusClick(menu)"
         >
           <span class="ant-dropdown-menu-title-content">
             {{ menu.label }}
+          </span>
+          <span class="hot-key">
+            {{ menu.hotKey }}
           </span>
         </li>
       </ul>
@@ -92,5 +95,14 @@ export default defineComponent({
   position: absolute;
   display: none;
   min-width: 150px;
+}
+.item {
+  display: flex;
+  justify-content: space-between;
+}
+.hot-key {
+  display: inline-block;
+  text-align: right;
+  color: #d6d6d6;
 }
 </style>

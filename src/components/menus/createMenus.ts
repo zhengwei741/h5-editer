@@ -3,6 +3,7 @@ import Menus from './index.vue'
 
 export interface MenuType {
   label: string
+  hotKey?: string
   action: (cid: string | null) => void
 }
 
