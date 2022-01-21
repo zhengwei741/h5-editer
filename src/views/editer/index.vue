@@ -1,5 +1,4 @@
 <template>
-  <ctx-menu :menus="menus" />
   <a-layout class="editer">
     <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
@@ -57,9 +56,9 @@ import { GlobalDataProps } from '@/store/index'
 import { ComponentProps } from '@/store/editer'
 
 import initHotKeys from '@/plugins/hotKeys'
+import initMenus from '@/plugins/menus'
 
 import OperateList from '@/components/operateList/index.vue'
-import CtxMenu from '@/components/menus/index.vue'
 
 import LText from '@/components/LText/index.vue'
 import LImage from '@/components/LImage/index.vue'
@@ -79,10 +78,10 @@ export default defineComponent({
     LayerList,
     PropsTable,
     OperateList,
-    CtxMenu,
   },
   setup() {
     initHotKeys()
+    initMenus()
 
     const store = useStore<GlobalDataProps>()
 

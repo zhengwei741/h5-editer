@@ -24,26 +24,21 @@
 
 <script lang="ts">
 import { defineComponent, PropType, onMounted, ref } from 'vue'
-
-interface menuType {
-  label: string
-  action: () => void
-}
+import { findParentElement } from '@/shared/helper'
+import { MenuType } from './createMenus'
 
 export default defineComponent({
   props: {
     menus: {
-      type: Array as PropType<menuType[]>,
-      default() {
-        return []
-      },
+      type: Array as PropType<MenuType[]>,
+      required: true,
     },
     triggerClass: {
       type: String,
       default: 'edit-wrapper',
     },
   },
-  setup() {
+  setup(props) {
     onMounted(() => {
       document.addEventListener('contextmenu', triggerContextMenu)
       document.addEventListener('click', handleClick)
@@ -51,10 +46,16 @@ export default defineComponent({
 
     const contextMenuRef = ref<null | HTMLElement>(null)
 
+    const wapperEl = ref<null | HTMLElement>(null)
+
     const triggerContextMenu = (e: MouseEvent) => {
+      e.preventDefault()
       const ref = contextMenuRef.value
-      if (ref) {
-        e.preventDefault()
+      wapperEl.value = findParentElement(
+        e.target as HTMLElement,
+        props.triggerClass
+      )
+      if (ref && wapperEl.value) {
         ref.style.display = 'block'
         ref.style.top = e.pageY + 'px'
         ref.style.left = e.pageX + 'px'
@@ -66,12 +67,15 @@ export default defineComponent({
       domElement.style.display = 'none'
     }
 
-    const onMenusClick = (menu: menuType) => {
+    const onMenusClick = (menu: MenuType) => {
       const ref = contextMenuRef.value
       if (ref) {
         ref.style.display = 'none'
       }
-      menu.action()
+      const wapper = wapperEl.value
+      if (wapper) {
+        menu.action(wapper.getAttribute('data-cid'))
+      }
     }
     return {
       contextMenuRef,

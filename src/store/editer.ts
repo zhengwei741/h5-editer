@@ -217,8 +217,16 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         message.info('已粘贴拷贝图层')
       }
     },
-    delete() {
-      const currentElement = store.getters.getCurrentElement
+    delete(state, cid) {
+      let currentElement
+      if (cid) {
+        currentElement = state.components.find(
+          (component) => component.id === cid
+        )
+      }
+      if (currentElement) {
+        currentElement = store.getters.getCurrentElement
+      }
       if (currentElement) {
         store.commit('deleteComponent', currentElement)
         message.success('删除当前图层成功')
@@ -316,6 +324,9 @@ const editer: Module<EditerProps, GlobalDataProps> = {
           modifyHistory(historyData, state, 'undo')
           break
       }
+    },
+    escape(state) {
+      state.currentElement = ''
     },
   },
   actions: {},

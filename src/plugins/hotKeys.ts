@@ -22,6 +22,9 @@ const initHotKeys = () => {
   useHotKeys('delete', () => {
     store.commit('delete')
   })
+  useHotKeys('escape', () => {
+    store.commit('escape')
+  })
   useHotKeys(
     'up',
     wrap(() => {
