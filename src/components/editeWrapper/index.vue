@@ -5,6 +5,7 @@
     :class="{ active: active, hidden: hidden }"
     @mousedown="startMove"
     :style="styles"
+    :data-cid="id"
     ref="editWrapper"
   >
     <slot></slot>

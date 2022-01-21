@@ -1,10 +1,10 @@
 <template>
-  <OperateList />
   <a-layout class="editer">
     <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
     </a-layout-sider>
     <a-layout-content class="content">
+      <operate-list />
       <div class="content-inner" :style="page.props" id="editerContent">
         <edite-wrapper
           v-for="component of components"
@@ -56,6 +56,7 @@ import { GlobalDataProps } from '@/store/index'
 import { ComponentProps } from '@/store/editer'
 
 import initHotKeys from '@/plugins/hotKeys'
+import initMenus from '@/plugins/menus'
 
 import OperateList from '@/components/operateList/index.vue'
 
@@ -80,6 +81,7 @@ export default defineComponent({
   },
   setup() {
     initHotKeys()
+    initMenus()
 
     const store = useStore<GlobalDataProps>()
 
@@ -121,6 +123,15 @@ export default defineComponent({
       })
     }
 
+    const menus = [
+      {
+        label: 'xxx',
+        action() {
+          console.log(123)
+        },
+      },
+    ]
+
     return {
       components,
       deleteComponent,
@@ -131,6 +142,7 @@ export default defineComponent({
       page,
       onPageHandleChange,
       updatePosition,
+      menus,
     }
   },
 })
@@ -146,6 +158,7 @@ export default defineComponent({
     .content-inner {
       height: 100%;
       overflow-y: auto;
+      overflow-x: hidden;
       background: white;
       position: absolute;
       top: 20px;

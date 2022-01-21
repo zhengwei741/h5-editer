@@ -15,3 +15,23 @@ export const getImageDimensions = (url: string | File) => {
     })
   })
 }
+
+/**
+ * 查找父级元素
+ * @param el dom节点
+ * @param className 类名
+ * @returns 节点或者为空
+ */
+export const findParentElement = (
+  el: HTMLElement,
+  className: string
+): HTMLElement | null => {
+  while (el.parentElement) {
+    const parentElement = el.parentElement
+    if (parentElement.classList.contains(className)) {
+      return parentElement
+    }
+    el = parentElement
+  }
+  return null
+}
