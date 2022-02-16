@@ -1,20 +1,7 @@
 {
-  "posts": [
-    {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
-    {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
-    }
-  ],
   "profile": {
-    "name": "typicode"
+    "userName": "admin",
+    "passWord": "123"
   },
   "works": [
     {
@@ -33,5 +20,8 @@
       "veriCode": 123,
       "id": 4
     }
-  ]
+  ],
+  "fetchCurrentUser": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImFkbWluIiwicGFzc1dvcmQiOiIxMjMiLCJpYXQiOjE2NDQ5MTYyNjIsImV4cCI6MTY0NDkxOTg2Mn0.yB-giAPW47v5x0zjq0OhuAZl5nyH5DMIL0SStQluWQs"
+  }
 }

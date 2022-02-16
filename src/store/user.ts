@@ -1,37 +1,58 @@
 import { Module } from 'vuex'
+import { AxiosRequestConfig } from 'axios'
 import { GlobalDataProps } from './index'
+
+import { login, fetchCurrentUser } from '@/api/user'
 
 export interface UserProps {
   isLogin: boolean
+  userInfo: UserInfo | null | undefined
+  token: string | null
+}
+
+export interface UserInfo {
   userName?: string
+  token?: string
 }
 
 const user: Module<UserProps, GlobalDataProps> = {
   state: {
     // 用户信息
     isLogin: false,
+    userInfo: null,
+    token: sessionStorage.getItem('_userToken_'),
   },
   mutations: {
     loginOut(state) {
       state.isLogin = false
-      state.userName = ''
+      state.token = null
+      sessionStorage.removeItem('_userToken_')
     },
-    login(state, userInfo = {}) {
+    login(state, userInfo: UserInfo) {
       state.isLogin = true
-      state.userName = userInfo.userName
+      state.userInfo = userInfo
+    },
+    updateToken(state, token) {
+      state.token = token
+      sessionStorage.setItem('_userToken_', token)
     },
   },
   actions: {
-    loginOut({ commit }) {
-      commit('loginOut')
+    login({ commit }, { userName, passWord }) {
+      return login(userName, passWord).then(
+        (res: AxiosRequestConfig<UserInfo>) => {
+          commit('login', { userName })
+          commit('updateToken', res.data?.token)
+        }
+      )
     },
-    login({ commit }) {
-      commit('login', { userName: 'test' })
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve('登录成功')
-        }, 1000)
-      })
+    fetchCurrentUser({ commit }, token: string) {
+      return fetchCurrentUser(token).then(
+        (res: AxiosRequestConfig<UserInfo>) => {
+          commit('login', res.data)
+          return res.data
+        }
+      )
     },
   },
 }

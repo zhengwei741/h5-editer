@@ -17,9 +17,9 @@
 //   rspMsg: 'Success'
 // }
 
-interface responseType<T> {
-  result: T | T[]
-  rspCode: number
+export interface responseType<T> {
+  result?: T | T[]
+  errorno: number
   rspMsg: string
 }
 

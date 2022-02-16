@@ -28,11 +28,10 @@ server.use(bodyParser.json())
 server.use(rewriter)
 server.use(middlewares)
 
-// 添加works 验证token 中间件
-server.use('/works', (req, res, next) => {
+const checkAuth = (req, res, next) => {
   const errorResp = {
     erroron: 1200,
-    message: '登录校验失败',
+    rspMsg: '登录校验失败',
   }
   const authHeader = req.headers.authorization
   if (!authHeader) {
@@ -45,14 +44,10 @@ server.use('/works', (req, res, next) => {
   } catch {
     res.json(errorResp)
   }
-})
+}
 
-// 自定义接口
-server.get('/echo', (req, res) => {
-  res.json({
-    data: '123',
-  })
-})
+// 添加works 验证token 中间件
+server.use('/works', checkAuth)
 
 // 自定义接口生成token
 server.post('/users/loginByPhoneNumber', (req, res) => {
@@ -62,6 +57,34 @@ server.post('/users/loginByPhoneNumber', (req, res) => {
     data: {
       token,
     },
+  })
+})
+
+server.post('/user/login', (req, res) => {
+  const { userName, passWord } = req.body
+  if (userName === 'admin' && passWord === '123') {
+    const token = createToken({ userName, passWord })
+    res.status(200).json({
+      errorno: 0,
+      data: {
+        token,
+      },
+    })
+  } else {
+    res.status(200).json({
+      errorno: 200001,
+      rspMsg: '用户名或密码错误',
+    })
+  }
+})
+
+server.use('/user/fetchCurrentUser', checkAuth)
+server.post('/user/fetchCurrentUser', (req, res) => {
+  const { token } = req
+  res.status(200).json({
+    userName: 'admin',
+    token,
+    errorno: 0,
   })
 })
 
