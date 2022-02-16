@@ -27,7 +27,6 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  components: {},
   setup() {
     const store = useStore<GlobalDataProps>()
     const user = computed(() => store.state.user)
@@ -38,12 +37,11 @@ export default defineComponent({
     }
 
     const loginOut = () => {
-      store.dispatch('loginOut')
+      store.commit('loginOut')
     }
 
     return {
       user,
-
       goToLogin,
       loginOut,
     }

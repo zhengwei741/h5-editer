@@ -37,13 +37,13 @@
               </template>
             </a-input-password>
           </a-form-item>
-
           <a-form-item>
             <a-button
               :disabled="disabled"
               type="primary"
               html-type="submit"
               class="login-form-button"
+              :loading="isLoading"
             >
               Log in
             </a-button>
@@ -56,11 +56,11 @@
 
 <script lang="ts">
 import { defineComponent, reactive, computed } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-
 import { message } from 'ant-design-vue'
+import { GlobalDataProps } from '@/store'
 
 interface FormState {
   userName: string
@@ -73,17 +73,20 @@ export default defineComponent({
     LockOutlined,
   },
   setup() {
-    const store = useStore()
+    const store = useStore<GlobalDataProps>()
 
-    // const router = useRouter()
+    const router = useRouter()
     const login = (user: any) => {
       store.dispatch('login', user).then(() => {
         message.success('登录成功')
-        // router.push({
-        //   path: '/',
-        // })
+        setTimeout(() => {
+          router.push({
+            path: '/',
+          })
+        }, 300)
       })
     }
+    const isLoading = computed(() => store.getters.isOpLoading('/user/login'))
 
     const formState = reactive<FormState>({
       userName: 'admin',
@@ -104,6 +107,7 @@ export default defineComponent({
       onFinish,
       onFinishFailed,
       disabled,
+      isLoading,
     }
   },
 })

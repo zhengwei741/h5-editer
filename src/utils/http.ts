@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { message } from 'ant-design-vue'
 import { responseType } from '@/shared/responseType'
+import store from '@/store'
 
 const http = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
@@ -17,6 +18,7 @@ http.interceptors.request.use(
     config.headers.authorization = `Bearer ${sessionStorage.getItem(
       '_userToken_'
     )}`
+    store.commit('startLoading', config.url)
     return config
   },
   function (error: any) {
@@ -30,6 +32,7 @@ http.interceptors.response.use(
   function (response: AxiosResponse<responseType<any>>) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
+    store.commit('finishLoading', response.config.url)
     const { errorno, rspMsg } = response.data
     if (errorno !== 0) {
       message.error(rspMsg)

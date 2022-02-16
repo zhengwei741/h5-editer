@@ -64,12 +64,14 @@ server.post('/user/login', (req, res) => {
   const { userName, passWord } = req.body
   if (userName === 'admin' && passWord === '123') {
     const token = createToken({ userName, passWord })
-    res.status(200).json({
-      errorno: 0,
-      data: {
-        token,
-      },
-    })
+    setTimeout(() => {
+      res.status(200).json({
+        errorno: 0,
+        data: {
+          token,
+        },
+      })
+    }, 500)
   } else {
     res.status(200).json({
       errorno: 200001,
