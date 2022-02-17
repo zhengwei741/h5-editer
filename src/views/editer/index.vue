@@ -49,11 +49,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, onMounted } from 'vue'
 
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { GlobalDataProps } from '@/store/index'
-import { ComponentProps } from '@/store/editer'
+import { ComponentData } from '@/store/editer'
 
 import initHotKeys from '@/plugins/hotKeys'
 import initMenus from '@/plugins/menus'
@@ -67,6 +68,8 @@ import EditeWrapper from '@/components/editeWrapper/index.vue'
 import EditGroup from '@/components/editGroup/index.vue'
 import LayerList from '@/components/layerList/index.vue'
 import PropsTable from '@/components/propsTable/index.vue'
+
+import { fetchWork } from '@/api/templates'
 
 export default defineComponent({
   components: {
@@ -91,7 +94,7 @@ export default defineComponent({
 
     const page = computed(() => store.state.editer.page)
 
-    const deleteComponent = (component: ComponentProps) => {
+    const deleteComponent = (component: ComponentData) => {
       store.commit('deleteComponent', component)
     }
 
@@ -131,6 +134,15 @@ export default defineComponent({
         },
       },
     ]
+
+    const route = useRoute()
+
+    onMounted(() => {
+      const { params } = route
+      fetchWork(params.id as string).then((res) => {
+        store.commit('fetchWork', res)
+      })
+    })
 
     return {
       components,

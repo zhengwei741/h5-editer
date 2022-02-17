@@ -3,19 +3,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import TemplateList from '@/components/templateList/index.vue'
 
-import { GlobalDataProps } from '@/store/index'
-import { useStore } from 'vuex'
+import { fetchTemplates } from '@/api/templates'
+
+import { TemplateProps } from '@/store/templates'
 
 export default defineComponent({
   components: {
     TemplateList,
   },
   setup() {
-    const store = useStore<GlobalDataProps>()
-    const templateList = computed(() => store.state.templates.data)
+    const templateList = ref<TemplateProps[]>([])
+
+    const getTemplates = () => {
+      fetchTemplates().then((res) => {
+        const { data } = res
+        templateList.value = data.list
+      })
+    }
+
+    onMounted(() => {
+      getTemplates()
+    })
 
     return {
       templateList,

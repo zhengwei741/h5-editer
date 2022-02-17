@@ -48,6 +48,58 @@ const checkAuth = (req, res, next) => {
 
 // 添加works 验证token 中间件
 server.use('/works', checkAuth)
+server.get('/works', (req, res) => {
+  res.status(200).json({
+    errno: 0,
+    data: {
+      title: 'test',
+      desc: 'desc',
+      coverImg: 'coverImg',
+      content: {
+        components: [
+          {
+            id: '77361735-62d0-46d3-a9b3-60d52c74bc2c',
+            isHide: false,
+            isLock: false,
+            layerName: '图层1',
+            name: 'l-text',
+            props: {
+              text: '大标题',
+              fontSize: '30px',
+              fontFamily: '',
+              fontWeight: 'bold',
+              fontStyle: '',
+              textDecoration: '',
+              lineHeight: '',
+              textAlign: '',
+              color: '',
+              backgroundColor: '',
+              actionType: '',
+              url: '',
+              height: '',
+              width: '100px',
+              paddingLeft: '0px',
+              paddingRight: '0px',
+              paddingTop: '0px',
+              paddingBottom: '0px',
+              borderStyle: 'none',
+              borderColor: '#000',
+              borderWidth: '0',
+              borderRadius: '0',
+              boxShadow: '0 0 0 #000000',
+              opacity: '1',
+              position: 'absolute',
+              left: '79px',
+              top: '149px',
+              right: '0',
+              tag: 'h2',
+            },
+          },
+        ],
+      },
+    },
+  })
+})
 
 // 自定义接口生成token
 server.post('/users/loginByPhoneNumber', (req, res) => {
@@ -66,7 +118,7 @@ server.post('/user/login', (req, res) => {
     const token = createToken({ userName, passWord })
     setTimeout(() => {
       res.status(200).json({
-        errorno: 0,
+        errno: 0,
         data: {
           token,
         },
@@ -74,7 +126,7 @@ server.post('/user/login', (req, res) => {
     }, 500)
   } else {
     res.status(200).json({
-      errorno: 200001,
+      errno: 200001,
       rspMsg: '用户名或密码错误',
     })
   }
@@ -86,14 +138,14 @@ server.post('/user/fetchCurrentUser', (req, res) => {
   res.status(200).json({
     userName: 'admin',
     token,
-    errorno: 0,
+    errno: 0,
   })
 })
 
 // 修改数据结构
 router.render = (req, res) => {
   res.json({
-    errorno: 0,
+    errno: 0,
     data: {
       list: res.locals.data,
       count: res.locals.data.length,

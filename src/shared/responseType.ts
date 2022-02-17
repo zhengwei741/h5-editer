@@ -1,29 +1,13 @@
-// export interface responseType<T> {
-//   erroron: number
-//   data: T
-//   message?: string
-// }
+import { PageData, PageProps, ComponentData } from '@/store/editer'
 
-// interface ListData<T> {
-//   list: T[]
-//   count: number
-// }
-
-// export type ResponseListData<T> = responseType<ListData<T>>
-
-// {
-//   result: [],
-//   rspCode: 200,
-//   rspMsg: 'Success'
-// }
-
-export interface responseType<T> {
-  result?: T | T[]
-  errorno: number
-  rspMsg: string
+// eslint-disable-next-line @typescript-eslint/ban-types
+export interface RespData<T = {}> {
+  errno: number
+  data: T
+  message?: string
 }
 
-interface listType<T> {
+interface ListType<T> {
   list: T[]
   pageNum: number
   pageSize: number
@@ -31,4 +15,12 @@ interface listType<T> {
   total: number
 }
 
-export type ResponseListData<T> = responseType<listType<T>>
+export interface WorkData extends Omit<PageData, 'props'> {
+  content: {
+    components: ComponentData[]
+    props?: PageProps
+  }
+}
+
+export type RespWorkData = RespData<WorkData>
+export type ResponseListData<T> = RespData<ListType<T>>

@@ -5,15 +5,7 @@ import store from '@/store'
 import { cloneDeep, debounce } from 'lodash-es'
 import { v4 as uuidv4 } from 'uuid'
 import { message } from 'ant-design-vue'
-
-export interface ComponentProps {
-  id: string
-  props: AllFormProps
-  name: string
-  isLock?: boolean
-  isHide?: boolean
-  layerName: string
-}
+import { RespWorkData } from '@/shared/responseType'
 
 export interface PageProps {
   'background-color': string
@@ -24,7 +16,25 @@ export interface PageProps {
 }
 
 export interface PageData {
+  id?: number
   props?: PageProps
+  title?: string
+  desc?: string
+  coverImg?: string
+  uuid?: string
+  setting?: { [key: string]: any }
+  isTemplate?: boolean
+  isHot?: boolean
+  isNew?: boolean
+  author?: string
+  copiedCount?: number
+  status?: number
+  user?: {
+    gender: string
+    nickName: string
+    picture: string
+    userName: string
+  }
 }
 
 const pageDefaultProps = {
@@ -56,11 +66,26 @@ export interface history {
 }
 
 export interface EditerProps {
-  components: ComponentProps[]
+  components: ComponentData[]
   currentElement: string
   page: PageData
-  copyElement?: ComponentProps | null
+  copyElement?: ComponentData | null
   history: history
+}
+
+export interface ComponentData {
+  // 这个元素的 属性，属性请详见下面
+  props: Partial<AllComponentProps>
+  // id，uuid v4 生成
+  id: string
+  // 业务组件库名称 l-text，l-image 等等
+  name: 'l-text' | 'l-image' | 'l-shape'
+  // 图层是否隐藏
+  isHidden?: boolean
+  // 图层是否锁定
+  isLocked?: boolean
+  // 图层名称
+  layerName?: string
 }
 
 export interface updateComponentData {
@@ -72,7 +97,7 @@ export interface updateComponentData {
 
 type DirectionType = 'up' | 'down' | 'left' | 'right'
 
-const componentsData: ComponentProps[] = []
+const componentsData: ComponentData[] = []
 
 const pushHistory = (state: EditerProps, historyData: HistoryData) => {
   // 如果进行撤销
@@ -154,7 +179,6 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       )
       if (isRoot) {
         ;(updateComponent as any)[key as string] = value
-        // updateComponent[key as keyof ComponentProps] = value
       } else {
         if (updateComponent) {
           const oldValue = Array.isArray(key)
@@ -196,6 +220,14 @@ const editer: Module<EditerProps, GlobalDataProps> = {
           state.page.props[newKey] = value
         }
       }
+    },
+    fetchWork(state, { data }: RespWorkData) {
+      const { content, ...rest } = data
+      state.page = { ...state.page, ...rest }
+      if (content.props) {
+        state.page.props = content.props
+      }
+      state.components = content.components
     },
     // 快捷键
     copy(state, cid) {

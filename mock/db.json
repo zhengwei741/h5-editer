@@ -1,27 +1,52 @@
 {
-  "profile": {
-    "userName": "admin",
-    "passWord": "123"
-  },
-  "works": [
-    {
-      "id": 1
-    },
-    {
-      "id": 2
-    },
-    {
-      "phoneNumber": 123,
-      "veriCode": 123,
-      "id": 3
-    },
-    {
-      "phoneNumber": 123,
-      "veriCode": 123,
-      "id": 4
-    }
-  ],
   "fetchCurrentUser": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImFkbWluIiwicGFzc1dvcmQiOiIxMjMiLCJpYXQiOjE2NDQ5MTYyNjIsImV4cCI6MTY0NDkxOTg2Mn0.yB-giAPW47v5x0zjq0OhuAZl5nyH5DMIL0SStQluWQs"
+  },
+  "templates": [
+    {
+      "id": 0,
+      "title": "哈哈哈哈",
+      "coverImg": "",
+      "author": "test",
+      "copiedCount": 0,
+      "description": "description",
+      "authorImg": ""
+    },
+    {
+      "id": 1,
+      "title": "title222",
+      "coverImg": "",
+      "author": "test222",
+      "copiedCount": 0,
+      "description": "description222",
+      "authorImg": ""
+    },
+    {
+      "id": 3,
+      "title": "title3333",
+      "coverImg": "",
+      "author": "test333",
+      "copiedCount": 0,
+      "description": "description333",
+      "authorImg": ""
+    },
+    {
+      "id": 4
+    },
+    {
+      "id": 5
+    },
+    {
+      "id": 6
+    }
+  ],
+  "work": {
+    "title": "test",
+    "desc": "desc",
+    "coverImg": "coverImg",
+    "content": {
+      "components": [],
+      "props": {}
+    }
   }
 }

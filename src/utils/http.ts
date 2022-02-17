@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { message } from 'ant-design-vue'
-import { responseType } from '@/shared/responseType'
+import { RespData } from '@/shared/responseType'
 import store from '@/store'
 
 const http = axios.create({
@@ -29,14 +29,14 @@ http.interceptors.request.use(
 
 // Add a response interceptor
 http.interceptors.response.use(
-  function (response: AxiosResponse<responseType<any>>) {
+  function (response: AxiosResponse<RespData<any>>) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     store.commit('finishLoading', response.config.url)
-    const { errorno, rspMsg } = response.data
-    if (errorno !== 0) {
-      message.error(rspMsg)
-      return Promise.reject(rspMsg)
+    const { errno, message: msg } = response.data
+    if (errno !== 0) {
+      message.error(msg || '')
+      return Promise.reject(msg)
     }
     return response.data
   },
@@ -46,5 +46,31 @@ http.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+interface vAxios {
+  post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T>
+  get<T = any>(url: string, data?: any): Promise<T>
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>
+  delete<T = any>(url: string, data?: any): Promise<T>
+}
+
+export const defHttp: vAxios = {
+  post(url, data, config) {
+    return http.post(url, data, config)
+  },
+  get(url, data) {
+    return http.get(url, data)
+  },
+  put(url, data, config) {
+    return http.put(url, data, config)
+  },
+  delete(url, data) {
+    return http.delete(url, data)
+  },
+}
 
 export default http

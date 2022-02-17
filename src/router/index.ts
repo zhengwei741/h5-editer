@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "login" */ '../views/login/index.vue'),
   },
   {
-    path: '/editer',
+    path: '/editer/:id',
     name: 'editer',
     meta: {
       requiredLogin: true,

@@ -13,12 +13,18 @@ export interface TemplateProps {
 
 export interface TemplatesProps {
   data: TemplateProps[]
+  totalTemplates: number
+  works: TemplateProps[]
+  totalWorks: number
 }
 
 const templates: Module<TemplatesProps, GlobalDataProps> = {
   state: {
     // 模板数据
     data: [],
+    totalTemplates: 0,
+    works: [],
+    totalWorks: 0,
   },
   mutations: {},
   actions: {},
