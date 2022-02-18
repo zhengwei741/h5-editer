@@ -11,28 +11,28 @@
       <template #icon><RedoOutlined /> </template>
     </a-button>
   </a-tooltip>
-  <!-- <ul class="operateList">
-    <li
-      v-for="(item, index) in history"
-      :class="{ active: index === historyIndex }"
-      :key="index"
-    >
-      {{ item.type }} - {{ item.data && item.data.key }}
-    </li>
-  </ul> -->
+  <a-tooltip>
+    <template #title> 保存 </template>
+    <a-button shape="circle" @click="save" :loading="saveLoading">
+      <template #icon><SaveOutlined /> </template>
+    </a-button>
+  </a-tooltip>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
 
-import { RedoOutlined, UndoOutlined } from '@ant-design/icons-vue'
+import { RedoOutlined, UndoOutlined, SaveOutlined } from '@ant-design/icons-vue'
 import { GlobalDataProps } from '@/store/index'
+
+import useSaveWork from '@/hooks/useSaveWork'
 
 export default defineComponent({
   components: {
     RedoOutlined,
     UndoOutlined,
+    SaveOutlined,
   },
   setup() {
     const store = useStore<GlobalDataProps>()
@@ -41,13 +41,11 @@ export default defineComponent({
 
     const historyIndex = computed(() => store.state.editer.history.historyIndex)
 
-    const undoHistory = () => {
-      store.commit('undo')
-    }
+    const undoHistory = () => store.commit('undo')
 
-    const redoHistory = () => {
-      store.commit('redo')
-    }
+    const redoHistory = () => store.commit('redo')
+
+    const { save, saveLoading } = useSaveWork()
 
     const undoDisabled = computed(() => store.getters.undoDisabled)
 
@@ -58,8 +56,10 @@ export default defineComponent({
       historyIndex,
       undoHistory,
       redoHistory,
+      save,
       undoDisabled,
       redoDisabled,
+      saveLoading,
     }
   },
 })

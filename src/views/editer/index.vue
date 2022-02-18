@@ -138,10 +138,14 @@ export default defineComponent({
     const route = useRoute()
 
     onMounted(() => {
-      const { params } = route
-      fetchWork(params.id as string).then((res) => {
-        store.commit('fetchWork', res)
-      })
+      const {
+        params: { id },
+      } = route
+      if (id) {
+        fetchWork(id as string).then((res) => {
+          store.commit('fetchWork', res)
+        })
+      }
     })
 
     return {

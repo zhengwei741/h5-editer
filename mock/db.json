@@ -29,24 +29,136 @@
       "copiedCount": 0,
       "description": "description333",
       "authorImg": ""
-    },
-    {
-      "id": 4
-    },
-    {
-      "id": 5
-    },
-    {
-      "id": 6
     }
   ],
-  "work": {
-    "title": "test",
-    "desc": "desc",
-    "coverImg": "coverImg",
-    "content": {
-      "components": [],
-      "props": {}
+  "work": [
+    {
+      "id": 1,
+      "content": {
+        "components": [
+          {
+            "props": {
+              "text": "大标题",
+              "fontSize": "30px",
+              "fontFamily": "",
+              "fontWeight": "bold",
+              "fontStyle": "",
+              "textDecoration": "",
+              "lineHeight": "",
+              "textAlign": "",
+              "color": "",
+              "backgroundColor": "",
+              "actionType": "",
+              "url": "",
+              "height": "",
+              "width": "100px",
+              "paddingLeft": "0px",
+              "paddingRight": "0px",
+              "paddingTop": "0px",
+              "paddingBottom": "0px",
+              "borderStyle": "none",
+              "borderColor": "#000",
+              "borderWidth": "0",
+              "borderRadius": "0",
+              "boxShadow": "0 0 0 #000000",
+              "opacity": "1",
+              "position": "absolute",
+              "left": "114px",
+              "top": "309px",
+              "right": "0",
+              "tag": "h2"
+            },
+            "name": "l-text",
+            "id": "ae8760cc-43e9-4b57-b462-76dc9d601fc3",
+            "isHide": false,
+            "isLock": false,
+            "layerName": "图层1"
+          },
+          {
+            "props": {
+              "text": "正文内容",
+              "fontSize": "30px",
+              "fontFamily": "",
+              "fontWeight": "",
+              "fontStyle": "",
+              "textDecoration": "",
+              "lineHeight": "",
+              "textAlign": "",
+              "color": "",
+              "backgroundColor": "",
+              "actionType": "",
+              "url": "",
+              "height": "",
+              "width": "100px",
+              "paddingLeft": "0px",
+              "paddingRight": "0px",
+              "paddingTop": "0px",
+              "paddingBottom": "0px",
+              "borderStyle": "none",
+              "borderColor": "#000",
+              "borderWidth": "0",
+              "borderRadius": "0",
+              "boxShadow": "0 0 0 #000000",
+              "opacity": "1",
+              "position": "absolute",
+              "left": "167px",
+              "top": "42px",
+              "right": "0",
+              "tag": "p"
+            },
+            "name": "l-text",
+            "id": "d155bbdd-78d1-41b7-9d3b-a5d774f0666e",
+            "isHide": false,
+            "isLock": false,
+            "layerName": "图层2"
+          },
+          {
+            "props": {
+              "text": "链接内容",
+              "fontSize": "30px",
+              "fontFamily": "",
+              "fontWeight": "",
+              "fontStyle": "",
+              "textDecoration": "underline",
+              "lineHeight": "",
+              "textAlign": "",
+              "color": "#1890ff",
+              "backgroundColor": "",
+              "actionType": "",
+              "url": "",
+              "height": "",
+              "width": "100px",
+              "paddingLeft": "0px",
+              "paddingRight": "0px",
+              "paddingTop": "0px",
+              "paddingBottom": "0px",
+              "borderStyle": "none",
+              "borderColor": "#000",
+              "borderWidth": "0",
+              "borderRadius": "0",
+              "boxShadow": "0 0 0 #000000",
+              "opacity": "1",
+              "position": "absolute",
+              "left": "91px",
+              "top": "140px",
+              "right": "0",
+              "tag": "p"
+            },
+            "name": "l-text",
+            "id": "79141ace-c901-418c-8ac4-1fe64c846c29",
+            "isHide": false,
+            "isLock": false,
+            "layerName": "图层3"
+          }
+        ],
+        "props": {
+          "background-color": "#ffffff",
+          "background-image": "",
+          "background-repeat": "no-repeat",
+          "background-size": "cover",
+          "height": "560px"
+        }
+      }
     }
-  }
+  ]
 }

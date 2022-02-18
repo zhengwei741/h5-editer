@@ -1,4 +1,4 @@
-import { Module } from 'vuex'
+import { Module, Mutation } from 'vuex'
 import { GlobalDataProps } from './index'
 import { AllComponentProps } from '@/shared/defaultProps'
 import store from '@/store'
@@ -71,6 +71,7 @@ export interface EditerProps {
   page: PageData
   copyElement?: ComponentData | null
   history: history
+  isDirty: boolean
 }
 
 export interface ComponentData {
@@ -132,6 +133,13 @@ const modifyHistory = (
   }
 }
 
+const setDirty = (callBack: Mutation<EditerProps>) => {
+  return (state: EditerProps, option: any) => {
+    state.isDirty = true
+    callBack(state, option)
+  }
+}
+
 const editer: Module<EditerProps, GlobalDataProps> = {
   state: {
     components: componentsData,
@@ -146,9 +154,10 @@ const editer: Module<EditerProps, GlobalDataProps> = {
       historyIndex: -1,
       cacheOldValue: [],
     },
+    isDirty: false,
   },
   mutations: {
-    addComponent(state, component) {
+    addComponent: setDirty((state, component) => {
       component.layerName = '图层' + (state.components.length + 1)
       state.components.push(component)
       pushHistory(state, {
@@ -156,8 +165,8 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         id: component.id,
         data: component,
       })
-    },
-    deleteComponent(state, component) {
+    }),
+    deleteComponent: setDirty((state, component) => {
       state.components = state.components.filter(
         (cmp) => cmp.id !== component.id
       )
@@ -166,52 +175,54 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         data: component,
         id: component.id,
       })
-    },
+    }),
     updateComponentList(state, list) {
       state.components = list
     },
-    updateComponent(state, { key, value, isRoot, id }: updateComponentData) {
-      if (!key) {
-        return
-      }
-      const updateComponent = state.components.find(
-        (component) => component.id === (id || state.currentElement)
-      )
-      if (isRoot) {
-        ;(updateComponent as any)[key as string] = value
-      } else {
-        if (updateComponent) {
-          const oldValue = Array.isArray(key)
-            ? key.map((item) => updateComponent.props[item] as string)
-            : [updateComponent.props[key] as string]
+    updateComponent: setDirty(
+      (state, { key, value, isRoot, id }: updateComponentData) => {
+        if (!key) {
+          return
+        }
+        const updateComponent = state.components.find(
+          (component) => component.id === (id || state.currentElement)
+        )
+        if (isRoot) {
+          ;(updateComponent as any)[key as string] = value
+        } else {
+          if (updateComponent) {
+            const oldValue = Array.isArray(key)
+              ? key.map((item) => updateComponent.props[item] as string)
+              : [updateComponent.props[key] as string]
 
-          if (!state.history.cacheOldValue.length) {
-            state.history.cacheOldValue = oldValue
-          }
-          pushHistoryDebounce(state, {
-            type: 'modify',
-            data: {
-              key: Array.isArray(key) ? key : [key],
-              oldValue: state.history.cacheOldValue,
-              newValue: Array.isArray(value) ? value : [value],
-            },
-            id: updateComponent.id,
-          })
-
-          if (typeof key === 'string' && typeof value === 'string') {
-            updateComponent.props[key] = value
-          } else if (Array.isArray(key) && Array.isArray(value)) {
-            key.forEach((item, index) => {
-              updateComponent.props[item] = value[index]
+            if (!state.history.cacheOldValue.length) {
+              state.history.cacheOldValue = oldValue
+            }
+            pushHistoryDebounce(state, {
+              type: 'modify',
+              data: {
+                key: Array.isArray(key) ? key : [key],
+                oldValue: state.history.cacheOldValue,
+                newValue: Array.isArray(value) ? value : [value],
+              },
+              id: updateComponent.id,
             })
+
+            if (typeof key === 'string' && typeof value === 'string') {
+              updateComponent.props[key] = value
+            } else if (Array.isArray(key) && Array.isArray(value)) {
+              key.forEach((item, index) => {
+                updateComponent.props[item] = value[index]
+              })
+            }
           }
         }
       }
-    },
+    ),
     setActive(state, currentId: string) {
       state.currentElement = currentId
     },
-    updatePage(state, { key, value, isRoot }) {
+    updatePage: setDirty((state, { key, value, isRoot }) => {
       const newKey = key as keyof PageProps
       if (isRoot) {
         console.log(1)
@@ -220,7 +231,7 @@ const editer: Module<EditerProps, GlobalDataProps> = {
           state.page.props[newKey] = value
         }
       }
-    },
+    }),
     fetchWork(state, { data }: RespWorkData) {
       const { content, ...rest } = data
       state.page = { ...state.page, ...rest }
@@ -228,6 +239,9 @@ const editer: Module<EditerProps, GlobalDataProps> = {
         state.page.props = content.props
       }
       state.components = content.components
+    },
+    saveWork(state) {
+      state.isDirty = false
     },
     // 快捷键
     copy(state, cid) {
