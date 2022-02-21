@@ -5,7 +5,7 @@ const server = jsonServer.create()
 const router = jsonServer.router('./mock/db.json')
 const middlewares = jsonServer.defaults()
 const jwt = require('jsonwebtoken')
-
+const json = require('./mock/db.json')
 const KEY = '1234'
 // 创建token
 const createToken = (playload) => {
@@ -48,6 +48,12 @@ const checkAuth = (req, res, next) => {
 
 // 添加works 验证token 中间件
 server.use('/work', checkAuth)
+server.get('/fetchWork', (req, res) => {
+  res.status(200).json({
+    errno: 0,
+    data: json.work[0],
+  })
+})
 
 // 自定义接口生成token
 server.post('/users/loginByPhoneNumber', (req, res) => {

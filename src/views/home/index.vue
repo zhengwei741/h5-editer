@@ -18,7 +18,7 @@ export default defineComponent({
     const templateList = ref<TemplateProps[]>([])
 
     const getTemplates = () => {
-      fetchTemplates().then((res) => {
+      fetchTemplates().then((res: any) => {
         const { data } = res
         templateList.value = data.list
       })
