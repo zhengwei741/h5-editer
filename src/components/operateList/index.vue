@@ -22,10 +22,8 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
-
 import { RedoOutlined, UndoOutlined, SaveOutlined } from '@ant-design/icons-vue'
 import { GlobalDataProps } from '@/store/index'
-
 import useSaveWork from '@/hooks/useSaveWork'
 
 export default defineComponent({
@@ -51,6 +49,8 @@ export default defineComponent({
 
     const redoDisabled = computed(() => store.getters.redoDisabled)
 
+    const publishLoading = computed(() => store.getters.isOpLoading('/publish'))
+
     return {
       history,
       historyIndex,
@@ -60,6 +60,7 @@ export default defineComponent({
       undoDisabled,
       redoDisabled,
       saveLoading,
+      publishLoading,
     }
   },
 })

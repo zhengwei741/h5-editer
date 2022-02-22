@@ -1,5 +1,4 @@
 import { Module } from 'vuex'
-import { AxiosRequestConfig } from 'axios'
 import { GlobalDataProps } from './index'
 
 import { login, fetchCurrentUser } from '@/api/user'
@@ -39,20 +38,16 @@ const user: Module<UserProps, GlobalDataProps> = {
   },
   actions: {
     login({ commit }, { userName, passWord }) {
-      return login(userName, passWord).then(
-        (res: AxiosRequestConfig<UserInfo>) => {
-          commit('login', { userName })
-          commit('updateToken', res.data?.token)
-        }
-      )
+      return login(userName, passWord).then((res) => {
+        commit('login', { userName })
+        commit('updateToken', res.data?.token)
+      })
     },
     fetchCurrentUser({ commit }, token: string) {
-      return fetchCurrentUser(token).then(
-        (res: AxiosRequestConfig<UserInfo>) => {
-          commit('login', res.data)
-          return res.data
-        }
-      )
+      return fetchCurrentUser(token).then((res) => {
+        commit('login', res.data)
+        return res.data
+      })
     },
   },
 }

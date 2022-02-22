@@ -42,7 +42,7 @@ const pageDefaultProps = {
   'background-image': '',
   'background-repeat': 'no-repeat',
   'background-size': 'cover',
-  height: '560px',
+  height: '530px',
 }
 
 const pageData: PageData = {

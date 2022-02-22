@@ -2,10 +2,22 @@
   <a-layout class="editer">
     <a-layout-sider theme="light" width="350" class="sider">
       <component-list />
+      <img id="canvasImg" />
+      <operate-list />
+      <a-tooltip>
+        <template #title> 发布 </template>
+        <a-button shape="circle" @click="publish">
+          <template #icon><FileOutlined /> </template>
+        </a-button>
+      </a-tooltip>
     </a-layout-sider>
     <a-layout-content class="content">
-      <operate-list />
-      <div class="content-inner" :style="page.props" id="editerContent">
+      <div
+        class="content-inner"
+        :class="{ 'canvas-fix': canvasFix }"
+        :style="page.props"
+        id="editerContent"
+      >
         <edite-wrapper
           v-for="component of components"
           :key="component.id"
@@ -49,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue'
+import { defineComponent, computed, ref, onMounted, nextTick } from 'vue'
 
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
@@ -71,6 +83,10 @@ import PropsTable from '@/components/propsTable/index.vue'
 
 import { fetchWork } from '@/api/templates'
 
+import html2canvas from 'html2canvas'
+
+import { FileOutlined } from '@ant-design/icons-vue'
+
 export default defineComponent({
   components: {
     LText,
@@ -81,6 +97,7 @@ export default defineComponent({
     LayerList,
     PropsTable,
     OperateList,
+    FileOutlined,
   },
   setup() {
     initHotKeys()
@@ -148,6 +165,21 @@ export default defineComponent({
       }
     })
 
+    const canvasFix = ref(false)
+    const publish = async () => {
+      store.commit('setActive', null)
+      canvasFix.value = true
+      await nextTick()
+      const el = document.getElementById('editerContent') as HTMLElement
+      html2canvas(el, { width: 375, scale: 1, useCORS: true }).then(
+        (canvas) => {
+          const img = document.getElementById('canvasImg') as HTMLElement
+          img.setAttribute('src', canvas.toDataURL())
+          canvasFix.value = false
+        }
+      )
+    }
+
     return {
       components,
       deleteComponent,
@@ -159,6 +191,8 @@ export default defineComponent({
       onPageHandleChange,
       updatePosition,
       menus,
+      publish,
+      canvasFix,
     }
   },
 })
@@ -171,17 +205,21 @@ export default defineComponent({
     height: 100%;
     padding: 10px;
     position: relative;
+    display: flex;
+    justify-content: center;
     .content-inner {
       height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
       background: white;
       position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 50px;
       width: 375px;
+      min-height: 85vh;
     }
+  }
+  .canvas-fix .edit-wrapper > * {
+    box-shadow: none !important;
   }
   .sider {
     padding: 10px;
