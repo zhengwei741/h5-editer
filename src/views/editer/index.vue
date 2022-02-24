@@ -1,8 +1,6 @@
 <template>
-  <a-layout class="editer">
-    <a-layout-sider theme="light" width="350" class="sider">
-      <component-list />
-      <img id="canvasImg" />
+  <a-layout>
+    <a-layout-header>
       <operate-list />
       <a-tooltip>
         <template #title> 发布 </template>
@@ -10,53 +8,66 @@
           <template #icon><FileOutlined /> </template>
         </a-button>
       </a-tooltip>
-    </a-layout-sider>
-    <a-layout-content class="content">
-      <div
-        class="content-inner"
-        :class="{ 'canvas-fix': canvasFix }"
-        :style="page.props"
-        id="editerContent"
-      >
-        <edite-wrapper
-          v-for="component of components"
-          :key="component.id"
-          :id="component.id"
-          :hidden="component.isHide"
-          :active="component.id === (currentElement && currentElement.id)"
-          :props="component.props"
-          @set-active="setActive"
-          @update-position="updatePosition"
+    </a-layout-header>
+    <a-layout class="editer">
+      <a-layout-sider theme="light" width="350" class="sider">
+        <component-list />
+        <img id="canvasImg" />
+      </a-layout-sider>
+      <a-layout-content class="content">
+        <div
+          class="content-inner"
+          :class="{ 'canvas-fix': canvasFix }"
+          :style="page.props"
+          id="editerContent"
         >
-          <component :is="component.name" v-bind="component.props" />
-        </edite-wrapper>
-      </div>
-    </a-layout-content>
-    <a-layout-sider theme="light" width="350" class="sider">
-      <a-tabs v-if="currentElement" type="card" v-model:activeKey="activePanel">
-        <a-tab-pane key="component" tab="属性设置">
-          <div v-if="!currentElement.isLock">
-            <edit-group :props="currentElement?.props" @change="handleChange" />
-          </div>
-          <a-empty v-else>
-            <template #description>
-              <span> 该图层已被锁定 </span>
-            </template>
-          </a-empty>
-        </a-tab-pane>
-        <a-tab-pane key="layer" tab="图层设置" force-render>
-          <layer-list
-            :componentList="components"
-            :selectedId="currentElement.id"
-            @clickItem="setActive"
-            @change="handleChange"
-          ></layer-list>
-        </a-tab-pane>
-        <a-tab-pane key="background" tab="背景设置" force-render>
-          <props-table :props="page.props" @change="onPageHandleChange" />
-        </a-tab-pane>
-      </a-tabs>
-    </a-layout-sider>
+          <edite-wrapper
+            v-for="component of components"
+            :key="component.id"
+            :id="component.id"
+            :hidden="component.isHide"
+            :active="component.id === (currentElement && currentElement.id)"
+            :props="component.props"
+            @set-active="setActive"
+            @update-position="updatePosition"
+          >
+            <component :is="component.name" v-bind="component.props" />
+          </edite-wrapper>
+        </div>
+      </a-layout-content>
+      <a-layout-sider theme="light" width="350" class="sider">
+        <a-tabs
+          v-if="currentElement"
+          type="card"
+          v-model:activeKey="activePanel"
+        >
+          <a-tab-pane key="component" tab="属性设置">
+            <div v-if="!currentElement.isLock">
+              <edit-group
+                :props="currentElement?.props"
+                @change="handleChange"
+              />
+            </div>
+            <a-empty v-else>
+              <template #description>
+                <span> 该图层已被锁定 </span>
+              </template>
+            </a-empty>
+          </a-tab-pane>
+          <a-tab-pane key="layer" tab="图层设置" force-render>
+            <layer-list
+              :componentList="components"
+              :selectedId="currentElement.id"
+              @clickItem="setActive"
+              @change="handleChange"
+            ></layer-list>
+          </a-tab-pane>
+          <a-tab-pane key="background" tab="背景设置" force-render>
+            <props-table :props="page.props" @change="onPageHandleChange" />
+          </a-tab-pane>
+        </a-tabs>
+      </a-layout-sider>
+    </a-layout>
   </a-layout>
 </template>
 
@@ -201,6 +212,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .editer {
   height: 100%;
+  min-height: 100vh;
   .content {
     height: 100%;
     padding: 10px;

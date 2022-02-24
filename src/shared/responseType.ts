@@ -22,5 +22,10 @@ export interface WorkData extends Omit<PageData, 'props'> {
   }
 }
 
+export interface UploadData {
+  urls: string[]
+}
+
+export type RespUploadData = RespData<UploadData>
 export type RespWorkData = RespData<WorkData>
 export type ResponseListData<T> = RespData<ListType<T>>
