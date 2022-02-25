@@ -1,29 +1,19 @@
-import { ref, nextTick } from 'vue'
-import { useStore } from 'vuex'
-import { GlobalDataProps } from '@/store/index'
-import html2canvas from 'html2canvas'
+import { ref } from 'vue'
+import { takeScreenshotAndUpload } from '@/shared/helper'
 
 const usePublishWork = () => {
-  const canvasFix = ref(false)
-  const store = useStore<GlobalDataProps>()
+  const isPublishing = ref(false)
 
   const publish = async (el: HTMLElement) => {
-    store.commit('setActive', null)
-    canvasFix.value = true
-    await nextTick()
-    return new Promise((resolve, reject) => {
-      html2canvas(el, { width: 375, scale: 1, useCORS: true })
-        .then((canvas) => {
-          canvasFix.value = false
-          resolve(canvas.toDataURL())
-        })
-        .catch(reject)
-    })
+    isPublishing.value = true
+    const data = await takeScreenshotAndUpload(el)
+    isPublishing.value = false
+    return data
   }
 
   return {
     publish,
-    canvasFix,
+    isPublishing,
   }
 }
 

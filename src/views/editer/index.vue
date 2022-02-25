@@ -4,7 +4,7 @@
       <operate-list />
       <a-tooltip>
         <template #title> 发布 </template>
-        <a-button shape="circle" @click="publish">
+        <a-button shape="circle" @click="publishWork" :loading="isPublishing">
           <template #icon><FileOutlined /> </template>
         </a-button>
       </a-tooltip>
@@ -73,17 +73,13 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, onMounted, nextTick } from 'vue'
-
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { GlobalDataProps } from '@/store/index'
 import { ComponentData } from '@/store/editer'
-
 import initHotKeys from '@/plugins/hotKeys'
 import initMenus from '@/plugins/menus'
-
 import OperateList from '@/components/operateList/index.vue'
-
 import LText from '@/components/LText/index.vue'
 import LImage from '@/components/LImage/index.vue'
 import ComponentList from '@/components/componentList/index.vue'
@@ -91,12 +87,9 @@ import EditeWrapper from '@/components/editeWrapper/index.vue'
 import EditGroup from '@/components/editGroup/index.vue'
 import LayerList from '@/components/layerList/index.vue'
 import PropsTable from '@/components/propsTable/index.vue'
-
 import { fetchWork } from '@/api/templates'
-
-import html2canvas from 'html2canvas'
-
 import { FileOutlined } from '@ant-design/icons-vue'
+import usePublishWork from '@/hooks/usePublishWork'
 
 export default defineComponent({
   components: {
@@ -177,18 +170,19 @@ export default defineComponent({
     })
 
     const canvasFix = ref(false)
-    const publish = async () => {
-      store.commit('setActive', null)
+    const { publish, isPublishing } = usePublishWork()
+    const publishWork = async () => {
+      store.commit('setActive', '')
+      const el = document.getElementById('canvas-area') as HTMLElement
       canvasFix.value = true
       await nextTick()
-      const el = document.getElementById('editerContent') as HTMLElement
-      html2canvas(el, { width: 375, scale: 1, useCORS: true }).then(
-        (canvas) => {
-          const img = document.getElementById('canvasImg') as HTMLElement
-          img.setAttribute('src', canvas.toDataURL())
-          canvasFix.value = false
-        }
-      )
+      try {
+        await publish(el)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        canvasFix.value = false
+      }
     }
 
     return {
@@ -202,7 +196,8 @@ export default defineComponent({
       onPageHandleChange,
       updatePosition,
       menus,
-      publish,
+      publishWork,
+      isPublishing,
       canvasFix,
     }
   },
