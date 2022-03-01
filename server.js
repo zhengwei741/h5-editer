@@ -96,6 +96,15 @@ server.post('/user/fetchCurrentUser', (req, res) => {
   })
 })
 
+server.get('/test', (req, res) => {
+  setTimeout(() => {
+    res.status(200).json({
+      errno: 0,
+      data: [],
+    })
+  }, 1000)
+})
+
 // 修改数据结构
 router.render = (req, res) => {
   const data = res.locals.data
