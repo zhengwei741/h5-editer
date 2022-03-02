@@ -7,6 +7,9 @@ const middlewares = jsonServer.defaults()
 const jwt = require('jsonwebtoken')
 const json = require('./mock/db.json')
 const KEY = '1234'
+
+const fs = require('fs')
+
 // 创建token
 const createToken = (playload) => {
   return jwt.sign(playload, KEY, {
@@ -103,6 +106,14 @@ server.get('/test', (req, res) => {
       data: [],
     })
   }, 1000)
+})
+
+server.get('/download', (req, res) => {
+  fs.readFile('./src/assets/img/login.jpg', (err, data) => {
+    if (!err) {
+      res.send(data)
+    }
+  })
 })
 
 // 修改数据结构

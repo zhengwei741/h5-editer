@@ -15,7 +15,7 @@
     </li>
   </ul>
 
-  <a-button>加载更多</a-button>
+  <a-button @click="save">加载更多</a-button>
 
   <a-button :disabled="isLastPage" :loading="isLoading" @click="nextPage"
     >下一页</a-button
@@ -26,6 +26,7 @@
 import { defineComponent, ref } from 'vue'
 import usePagination from '@/hooks/usePagination'
 import axios from 'axios'
+import { saveAs } from '@/shared/download'
 
 export default defineComponent({
   components: {},
@@ -52,6 +53,10 @@ export default defineComponent({
       goToPage(--page)
     }
 
+    const save = () => {
+      saveAs('/api/download', 'default.png')
+    }
+
     return {
       currentPage,
       totalPage,
@@ -62,6 +67,7 @@ export default defineComponent({
       prevPage,
       total,
       goto,
+      save,
     }
   },
 })
