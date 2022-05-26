@@ -14,9 +14,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          cache: 'npm'
+      with:
+        node-version: 14
+        cache: 'npm'
     # 安装依赖打包
     - name: Build source
       run: |
@@ -27,7 +27,7 @@ jobs:
     steps:
       # 使用正确的github tag 对应ACR tag 进行 docker build
       - name: Build image for ACR docker
-      run: docker build -f --tag /dockerfile/Dockerfile "registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}}" .
+        run: docker build -f --tag /dockerfile/Dockerfile "registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}}" .
       # 使用标记的 tag 进行 push
       - name: Push Image to ACR
         run: docker push registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}} 
