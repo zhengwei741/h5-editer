@@ -21,12 +21,9 @@ jobs:
       run: |
         npm install
         npm run build
-  build_docker_image:
-    runs-on: ubuntu-latest
-    steps:
       # 使用正确的github tag 对应ACR tag 进行 docker build
-      - name: Build image for ACR docker
-        run: docker build -f --tag /dockerfile/Dockerfile "registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}}" .
+    - name: Build image for ACR docker
+      run: docker build -f /dockerfile/Dockerfile --tag "registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}}" .
       # 使用标记的 tag 进行 push
-      - name: Push Image to ACR
-        run: docker push registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}} 
+    - name: Push Image to ACR
+      run: docker push registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}} 
