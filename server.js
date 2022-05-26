@@ -9,6 +9,7 @@ const json = require('./mock/db.json')
 const KEY = '1234'
 
 const fs = require('fs')
+const path = require('path')
 
 // 创建token
 const createToken = (playload) => {
@@ -109,11 +110,30 @@ server.get('/test', (req, res) => {
 })
 
 server.get('/download', (req, res) => {
-  fs.readFile('./src/assets/img/login.jpg', (err, data) => {
-    if (!err) {
-      res.send(data)
-    }
-  })
+  // fs.readFile('./src/assets/img/login.jpg', (err, data) => {
+  //   if (!err) {
+  //     res.setHeader('Content-disposition', 'attachment;filename=default.png')
+  //     res.body = data
+  //     // res.send(data)
+  //   }
+  // })
+  // res.setHeader('Content-Type', 'application/force-download')
+  // res.setHeader('Content-disposition', 'attachment;filename=default.png')
+  // const fileStram = fs.createReadStream(`${__dirname}/src/assets/img/login.jpg`)
+  // fileStram.pipe(res)
+  var file = `${__dirname}/src/assets/img/login.jpg`
+
+  res.setHeader('Content-disposition', 'attachment; filename=default.png')
+  res.setHeader('Content-type', 'image/png')
+
+  // res.download(file, (err) => {
+  //   if (err) {
+  //     res.send(err)
+  //   }
+  // })
+
+  var filestream = fs.createReadStream(file)
+  filestream.pipe(res)
 })
 
 // 修改数据结构

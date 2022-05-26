@@ -20,6 +20,11 @@
   <a-button :disabled="isLastPage" :loading="isLoading" @click="nextPage"
     >下一页</a-button
   >
+
+  <!-- a标签下载 http请求会获取文件数据 -->
+  <!-- ajax 只能以字符型读取 res -->
+  <a href="/api/download">下载</a>
+  <Rate :value="3"></Rate>
 </template>
 
 <script lang="ts">
@@ -27,9 +32,12 @@ import { defineComponent, ref } from 'vue'
 import usePagination from '@/hooks/usePagination'
 import axios from 'axios'
 import { saveAs } from '@/shared/download'
+import Rate from './rate.vue'
 
 export default defineComponent({
-  components: {},
+  components: {
+    Rate,
+  },
   setup() {
     const action = (params = { pageNum: 0, pageSize: 10 }) => {
       console.log(params)
@@ -54,8 +62,13 @@ export default defineComponent({
     }
 
     const save = () => {
-      saveAs('/api/download', 'default.png')
+      // saveAs('/api/download', 'default.png')
+      axios.get('/api/download').then((res: any) => {
+        console.log(res)
+      })
     }
+
+    const color = ref('red')
 
     return {
       currentPage,
@@ -68,6 +81,7 @@ export default defineComponent({
       total,
       goto,
       save,
+      color,
     }
   },
 })
@@ -81,5 +95,8 @@ export default defineComponent({
     /* This rule is very important, please don't ignore this */
     max-width: 100%;
   }
+}
+.image-wapper {
+  color: v-bind(color);
 }
 </style>

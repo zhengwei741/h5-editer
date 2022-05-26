@@ -50,6 +50,7 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "nodemon": "^2.0.15",
+    "postcss": "^8.4.12",
     "prettier": "^2.2.1",
     "typescript": "~4.1.5",
     "vue-draggable-next": "^2.1.1",

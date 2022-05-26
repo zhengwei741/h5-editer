@@ -1,0 +1,33 @@
+name: Build and Deploy to ACK
+
+# 在特定 tag 被 push 以后被触发
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    # 拉代码
+    - name: Checkout
+      uses: actions/checkout@v3
+      uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
+    # 安装依赖打包
+    - name: Build source
+      run: |
+        npm install
+        npm run build
+  build_docker_image:
+    runs-on: ubuntu-latest
+    steps:
+      # 使用正确的github tag 对应ACR tag 进行 docker build
+      - name: Build image for ACR docker
+      run: docker build -f --tag /dockerfile/Dockerfile "registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}}" .
+      # 使用标记的 tag 进行 push
+      - name: Push Image to ACR
+        run: docker push registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}} 

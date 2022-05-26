@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import store from '@/store'
+// import store from '@/store'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -53,30 +53,30 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
-router.beforeEach(async (to) => {
-  const { requiredLogin, redirectAlreadyLogin } = to.meta
-  const { isLogin, token } = store.state.user
-  if (isLogin) {
-    if (redirectAlreadyLogin) {
-      return '/'
-    }
-  } else {
-    if (token) {
-      try {
-        await store.dispatch('fetchCurrentUser', token)
-        if (redirectAlreadyLogin) {
-          return '/'
-        }
-      } catch (error) {
-        store.commit('loginOut')
-        return '/login'
-      }
-    } else {
-      if (requiredLogin) {
-        return '/login'
-      }
-    }
-  }
-})
+// router.beforeEach(async (to) => {
+//   const { requiredLogin, redirectAlreadyLogin } = to.meta
+//   const { isLogin, token } = store.state.user
+//   if (isLogin) {
+//     if (redirectAlreadyLogin) {
+//       return '/'
+//     }
+//   } else {
+//     if (token) {
+//       try {
+//         await store.dispatch('fetchCurrentUser', token)
+//         if (redirectAlreadyLogin) {
+//           return '/'
+//         }
+//       } catch (error) {
+//         store.commit('loginOut')
+//         return '/login'
+//       }
+//     } else {
+//       if (requiredLogin) {
+//         return '/login'
+//       }
+//     }
+//   }
+// })
 
 export default router
