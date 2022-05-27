@@ -11,7 +11,7 @@ RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
 RUN echo $TZ >/etc/timezone
 # 复制前端静态资源；
 COPY dist /usr/share/nginx/html/
-# 服务对外暴露端口，仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射
-EXPOSE 80
-# 应用启动命令；
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+
+COPY docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+CMD /docker-entrypoint.sh
