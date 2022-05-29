@@ -67,7 +67,7 @@ jobs:
         # ssh password
         password: ${{ secrets.SSH_PWD }}
         # execute commands
-        script: true
+        script_stop: true
         script: |
           docker login --username=${{secrets.ACR_USERNAME}} --password=${{ secrets.ACR_PASSWORD }} registry.cn-shanghai.aliyuncs.com
           cd ~/h5-editer-fontend/
