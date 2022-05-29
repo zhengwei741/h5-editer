@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "test": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "mock": "nodemon server.js"
+    "mock": "nodemon server.js",
+    "release": "release-it"
   },
   "dependencies": {
     "@types/lodash-es": "^4.17.5",
@@ -52,6 +53,7 @@
     "nodemon": "^2.0.15",
     "postcss": "^8.4.12",
     "prettier": "^2.2.1",
+    "release-it": "^15.0.0",
     "typescript": "~4.1.5",
     "vue-draggable-next": "^2.1.1",
     "vue-jest": "^5.0.0-0"
