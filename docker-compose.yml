@@ -1,0 +1,9 @@
+version: '3'
+services:
+  h5-editer-fontend:
+    image: registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:{{tag}}
+    container_name: h5-editer-fontend
+    ports:
+     - 7002:7001
+    env_file:
+     - .env
