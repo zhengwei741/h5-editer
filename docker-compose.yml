@@ -5,5 +5,3 @@ services:
     container_name: h5-editer-fontend
     ports:
      - 7002:7001
-    env_file:
-     - .env
