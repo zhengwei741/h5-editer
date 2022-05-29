@@ -1,47 +1,88 @@
 <template>
-  <!-- <IconSwitch></IconSwitch> -->
-  <!-- <image-uploader /> -->
-  <div class="image-wapper">
-    <img
-      id="image"
-      src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnimg.ws.126.net%2F%3Furl%3Dhttp%3A%2F%2Fdingyue.ws.126.net%2F2021%2F0128%2F6cd17366j00qnmnle008uc000vk00xcm.jpg%26thumbnail%3D650x2147483647%26quality%3D80%26type%3Djpg&refer=http%3A%2F%2Fnimg.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1643210383&t=85b0bdb2f86ba7486fdad23fd66dd36d"
-    />
-  </div>
+  总数{{ total }}
+
+  总页数 {{ totalPage }}
+
+  当前页数 {{ currentPage }}
+
+  <a-button :disabled="isFirstPage" :loading="isLoading" @click="prevPage"
+    >上一页</a-button
+  >
+
+  <ul>
+    <li @click="goto(item)" v-for="item of totalPage" :key="item">
+      {{ item }}
+    </li>
+  </ul>
+
+  <a-button @click="save">加载更多</a-button>
+
+  <a-button :disabled="isLastPage" :loading="isLoading" @click="nextPage"
+    >下一页</a-button
+  >
+
+  <!-- a标签下载 http请求会获取文件数据 -->
+  <!-- ajax 只能以字符型读取 res -->
+  <a href="/api/download">下载</a>
+  <Rate :value="3"></Rate>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-
-// import IconSwitch from '@/components/IconSwitch/index.vue'
-// import ImageUploader from '@/components/imageUploader/index.vue'
-
-import Cropper from 'cropperjs'
-import 'cropperjs/dist/cropper.css'
+import { defineComponent, ref } from 'vue'
+import usePagination from '@/hooks/usePagination'
+import axios from 'axios'
+import { saveAs } from '@/shared/download'
+import Rate from './rate.vue'
 
 export default defineComponent({
   components: {
-    // IconSwitch,
-    // ImageUploader,
+    Rate,
   },
-  mounted() {
-    const image = document.getElementById('image') as HTMLImageElement
-    new Cropper(image, {
-      aspectRatio: 16 / 9,
-      crop(event) {
-        console.log(event.detail.x)
-        console.log(event.detail.y)
-        console.log(event.detail.width)
-        console.log(event.detail.height)
-        console.log(event.detail.rotate)
-        console.log(event.detail.scaleX)
-        console.log(event.detail.scaleY)
-      },
-    })
-  },
-  methods: {
-    beforeUpload(file: any) {
-      console.log(file)
-    },
+  setup() {
+    const action = (params = { pageNum: 0, pageSize: 10 }) => {
+      console.log(params)
+      return axios.get('/api/test', {
+        params,
+      })
+    }
+    const total = ref(50)
+    const {
+      currentPage,
+      totalPage,
+      isLoading,
+      isLastPage,
+      isFirstPage,
+      nextPage,
+      prevPage,
+      goToPage,
+    } = usePagination(action, total, { pageNum: 0, pageSize: 20 })
+
+    const goto = (page: number) => {
+      goToPage(--page)
+    }
+
+    const save = () => {
+      // saveAs('/api/download', 'default.png')
+      axios.get('/api/download').then((res: any) => {
+        console.log(res)
+      })
+    }
+
+    const color = ref('red')
+
+    return {
+      currentPage,
+      totalPage,
+      isLoading,
+      isLastPage,
+      isFirstPage,
+      nextPage,
+      prevPage,
+      total,
+      goto,
+      save,
+      color,
+    }
   },
 })
 </script>
@@ -54,5 +95,8 @@ export default defineComponent({
     /* This rule is very important, please don't ignore this */
     max-width: 100%;
   }
+}
+.image-wapper {
+  color: v-bind(color);
 }
 </style>

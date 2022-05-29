@@ -62,7 +62,7 @@ import {
   EyeOutlined,
   EyeInvisibleOutlined,
 } from '@ant-design/icons-vue'
-import { ComponentProps } from '@/store/editer'
+import { ComponentData } from '@/store/editer'
 import InlineEdit from '@/components/inlineEdit/index.vue'
 
 export default defineComponent({
@@ -77,7 +77,7 @@ export default defineComponent({
   },
   props: {
     componentList: {
-      type: Array as PropType<ComponentProps[]>,
+      type: Array as PropType<ComponentData[]>,
       required: true,
     },
     selectedId: {
@@ -87,7 +87,7 @@ export default defineComponent({
   },
   emits: ['change', 'clickItem'],
   setup(props, { emit }) {
-    const onClickHandle = (component: ComponentProps) => {
+    const onClickHandle = (component: ComponentData) => {
       emit('clickItem', component.id)
     }
 

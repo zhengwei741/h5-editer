@@ -1,0 +1,77 @@
+name: Build and Deploy to ACK
+
+# 在特定 tag 被 push 以后被触发
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    # 拉代码
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 14
+        cache: 'npm'
+    # 安装依赖打包
+    - name: Build source
+      run: |
+        npm install
+        npm run build
+     # 使用阿里云ACR 完成 docker login 
+    - name: Login to Aliyun Container Registry (ACR)
+      uses: aliyun/acr-login@v1
+      with:
+        login-server: https://registry.cn-shanghai.aliyuncs.com
+        region-id: cn-shanghai
+        username: "${{ secrets.ACR_USERNAME }}"
+        password: "${{ secrets.ACR_PASSWORD }}"
+      # 使用正确的github tag 对应ACR tag 进行 docker build
+    - name: Build image for ACR docker
+      run: docker build -f dockerfile/Dockerfile --tag "registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}}" .
+      # 使用标记的 tag 进行 push
+    - name: Push Image to ACR
+      run: docker push registry.cn-shanghai.aliyuncs.com/zhengwei741/h5-editer-fontend:${{github.ref_name}} 
+    # 查找docker-compose 替换版本号
+    - name: Find and Replace
+      uses: jacobtomlinson/gha-find-replace@2.0.0
+      with:
+        include: "docker-compose.yml"
+        find: "{{tag}}"
+        replace: ${{github.ref_name}}
+    # 登录服务器拷贝必要文件
+    - name: copy file
+      run: |
+        mkdir h5-editer-fontend
+        cp docker-compose.yml h5-editer-fontend
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        password: ${{ secrets.SSH_PWD }}
+        port: ${{ secrets.SSH_PORT }}
+        source: "h5-editer-fontend"
+        target: "~"
+    # 登录服务器执行docker-compose
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        # ssh host
+        host: ${{ secrets.SSH_HOST }}
+        # ssh username
+        username: ${{ secrets.SSH_USER }}
+        # ssh password
+        password: ${{ secrets.SSH_PWD }}
+        # execute commands
+        script_stop: true
+        script: |
+          docker login --username=${{secrets.ACR_USERNAME}} --password=${{ secrets.ACR_PASSWORD }} registry.cn-shanghai.aliyuncs.com
+          cd ~/h5-editer-fontend/
+          docker-compose -f docker-compose.yml down
+          docker-compose -f docker-compose.yml up -d
+          docker logout registry.cn-shanghai.aliyuncs.com
+

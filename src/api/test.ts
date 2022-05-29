@@ -1,13 +1,22 @@
 import Http from '@/utils/http'
 
-import axios from 'axios'
-
-export const uploadFile = function (files: any) {
-  return axios.post('test')
-  // return new Promise((resolve, reject) => {
-  //   Http.get('test')
-  //   setTimeout(() => {
-  //     Math.random() > 0.5 ? resolve(files) : reject()
-  //   }, 1000)
-  // })
+interface fileType {
+  fileName: string
 }
+
+export const uploadFile = function (data: any) {
+  return Http.post('test', {
+    data,
+  })
+}
+
+// uploadFile(123).then((res: AxiosResponse<fileType>) => {
+// })
+
+// const wapperFn = (url: string) => {
+//   return (data: any): Promise<fileType> => {
+//     return Http.post(url, data).then((res) => {
+//       return res
+//     })
+//   }
+// }
