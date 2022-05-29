@@ -40,7 +40,7 @@ jobs:
       uses: jacobtomlinson/gha-find-replace@2.0.0
       with:
         include: "docker-compose.yml"
-        find: {{tag}}
+        find: "{{tag}}"
         replace: ${{github.ref_name}}
     # 登录服务器拷贝必要文件
     - name: copy file
@@ -54,8 +54,8 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.SSH_PWD }}
         port: ${{ secrets.SSH_PORT }}
-        source: 'h5-editer-fontend'
-        target: '~'
+        source: "h5-editer-fontend"
+        target: "~"
     # 登录服务器执行docker-compose
     - name: SSH Remote Commands
       uses: appleboy/ssh-action@v0.1.4
